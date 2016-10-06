@@ -7,7 +7,8 @@ import (
 
 func main() {
 	uri := "http://stackoverflow.com/feeds/tag?tagnames=sonarqube&sort=newest"
-	rssReader := xpd.NewRssReader(uri, xpd.Feed{})
+	feed := xpd.Feed{}
+	rssReader := xpd.NewRssReader(uri, &feed)
 	getAndPrintNewPosts(rssReader)
 }
 

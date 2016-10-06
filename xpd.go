@@ -8,7 +8,7 @@ type Post struct {
 }
 
 type Feed struct {
-	posts []Post
+	Posts []Post
 }
 
 type FeedReader interface {

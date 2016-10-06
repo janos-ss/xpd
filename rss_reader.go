@@ -10,12 +10,12 @@ import (
 
 type RssReader struct {
 	uri      string
-	feed     Feed
+	feed     *Feed
 	rssFeed  *rss.Feed
 	newPosts []Post
 }
 
-func NewRssReader(uri string, feed Feed) *RssReader {
+func NewRssReader(uri string, feed *Feed) *RssReader {
 	reader := RssReader{uri, feed, nil, nil}
 	timeout := 5
 	reader.rssFeed = rss.New(timeout, true, reader.chanHandler, reader.itemHandler)
@@ -50,6 +50,8 @@ func (reader *RssReader) GetNewPosts() []Post {
 		fmt.Fprintf(os.Stderr, "[e] %s: %s\n", reader.uri, err)
 		return []Post{}
 	}
+
+	reader.feed.Posts = append(reader.feed.Posts, reader.newPosts...)
 
 	return reader.newPosts
 }
