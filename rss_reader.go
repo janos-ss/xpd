@@ -9,15 +9,17 @@ import (
 )
 
 type RssReader struct {
-	Uri      string
-	Feed     Feed
-	RssFeed  *rss.Feed
-	NewPosts []Post
+	uri      string
+	feed     Feed
+	rssFeed  *rss.Feed
+	newPosts []Post
 }
 
-func (reader *RssReader) Init() {
+func NewRssReader(uri string, feed Feed) *RssReader {
+	reader := RssReader{uri, feed, nil, nil}
 	timeout := 5
-	reader.RssFeed = rss.New(timeout, true, reader.chanHandler, reader.itemHandler)
+	reader.rssFeed = rss.New(timeout, true, reader.chanHandler, reader.itemHandler)
+	return &reader
 }
 
 func (reader *RssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
@@ -38,18 +40,18 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 		posts = append(posts, post)
 	}
 
-	reader.NewPosts = posts
+	reader.newPosts = posts
 }
 
 func (reader *RssReader) GetNewPosts() []Post {
-	reader.NewPosts = nil
+	reader.newPosts = nil
 
-	if err := reader.RssFeed.Fetch(reader.Uri, charsetReader); err != nil {
-		fmt.Fprintf(os.Stderr, "[e] %s: %s\n", reader.Uri, err)
+	if err := reader.rssFeed.Fetch(reader.uri, charsetReader); err != nil {
+		fmt.Fprintf(os.Stderr, "[e] %s: %s\n", reader.uri, err)
 		return []Post{}
 	}
 
-	return reader.NewPosts
+	return reader.newPosts
 }
 
 func charsetReader(charset string, r io.Reader) (io.Reader, error) {
