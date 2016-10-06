@@ -29,7 +29,7 @@ func (reader *RssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel)
 func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	fmt.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
 
-	posts := make([]Post, len(newitems))
+	posts := make([]Post, 0)
 	for _, item := range (newitems) {
 		post := Post{
 			Url: item.Id,
