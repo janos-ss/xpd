@@ -77,3 +77,27 @@ func Test_similarEnoughCounts(t*testing.T) {
 		t.Error("got 1130, 1500 are similar enough, but should not be")
 	}
 }
+
+func Test_wordCountDiffs(t*testing.T) {
+	first := wordCountMap{
+		"hello": 7,
+		"world": 13,
+		"again": 17,
+	}
+	second := wordCountMap{
+		"welcome": 23,
+		"new": 29,
+		"world": 31,
+	}
+
+	expectedDiffsLeft := float64(7 + 17) + float64(31 - 13) / 2
+	expectedDiffsRight := float64(23 + 29) + float64(31 - 13) / 2
+
+	if actual := calcWordCountDiffs(first, second); actual != expectedDiffsLeft {
+		t.Errorf("got %f; expected %f", actual, expectedDiffsLeft)
+	}
+
+	if actual := calcWordCountDiffs(second, first); actual != expectedDiffsRight {
+		t.Errorf("got %f; expected %f", actual, expectedDiffsRight)
+	}
+}

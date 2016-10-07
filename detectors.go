@@ -3,6 +3,7 @@ package xpd
 import (
 	"strings"
 	"regexp"
+	"math"
 )
 
 type sameBodyDetector struct{}
@@ -23,11 +24,12 @@ type wordCountMap map[string]int
 
 func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Post) []Post {
 	wordCounts, total := calcWordCounts(post.Body)
+	limit := float64(total) / 10
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range (oldPosts) {
 		otherWordCounts, otherTotal := calcWordCounts(oldPost.Body)
-		if similarEnoughCounts(total, otherTotal) && similarEnough(wordCounts, otherWordCounts) {
+		if similarEnoughCounts(total, otherTotal) && similarEnough(wordCounts, otherWordCounts, limit) {
 			duplicates = append(duplicates, oldPost);
 		}
 	}
@@ -59,7 +61,20 @@ func similarEnoughCounts(a, b int) bool {
 	return 1 - interval < ratio && ratio < 1 + interval
 }
 
-func similarEnough(wordCounts, otherWordCounts wordCountMap) bool {
-	// TODO
-	return true
+func similarEnough(first, second wordCountMap, limit float64) bool {
+	diffs := calcWordCountDiffs(first, second) + calcWordCountDiffs(second, first)
+	return diffs < limit
+}
+
+func calcWordCountDiffs(first, second wordCountMap) float64 {
+	var diffs float64 = 0
+	for word, count := range(first) {
+		otherCount, ok := second[word]
+		if ok {
+			diffs += math.Abs(float64(count - otherCount)) / 2
+		} else {
+			diffs += float64(count)
+		}
+	}
+	return diffs
 }
