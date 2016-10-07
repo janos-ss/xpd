@@ -25,3 +25,6 @@ _testmain.go
 
 # IntelliJ
 .idea
+
+# Project specific
+/xpd.yml
