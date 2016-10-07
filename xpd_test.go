@@ -25,21 +25,9 @@ func Test_sameBodyDetector_findDuplicates_finds_same_body(t*testing.T) {
 	repo.add(Post{Body: differentBody})
 
 	var detector Detector = sameBodyDetector{}
-	if ! sliceEquals(detector.findDuplicates(post, []Post{post}), []Post{post}) {
+	if ! reflect.DeepEqual(detector.findDuplicates(post, []Post{post}), []Post{post}) {
 		t.Errorf("same-body-detector should find only the match")
 	}
-}
-
-func sliceEquals(s1 []Post, s2 []Post) bool {
-	if len(s1) != len(s2) {
-		return false
-	}
-	for i, _ := range (s1) {
-		if s1[i] != s2[i] {
-			return false
-		}
-	}
-	return true
 }
 
 func Test_ellipsize_someString_15_is_someString(t*testing.T) {
