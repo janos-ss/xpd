@@ -19,6 +19,7 @@ type Post struct {
 
 type Feed struct {
 	Id    string
+	Url   string
 	Posts []Post
 }
 
@@ -83,7 +84,7 @@ func Run(configfile string) {
 }
 
 type Config struct {
-	Feeds []string `yaml:"feeds,omitempty"`
+	Feeds []Feed `yaml:"feeds,omitempty"`
 }
 
 func readContext(configfile string) Context {
