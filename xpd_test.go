@@ -40,3 +40,17 @@ func sliceEquals(s1 []Post, s2 []Post) bool {
 	}
 	return true
 }
+
+func Test_ellipsize_someString_15_is_someString(t*testing.T) {
+	s := "someString"
+	if actual := ellipsize(s, 15); actual != s {
+		t.Fatalf("got %s; expected %s", actual, s)
+	}
+}
+
+func Test_ellipsize_someString_7_is_somedots(t*testing.T) {
+	s := "someString"
+	if actual, expected := ellipsize(s, 7), "some..."; actual != expected {
+		t.Fatalf("got %s; expected %s", actual, expected)
+	}
+}

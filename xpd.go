@@ -155,3 +155,10 @@ func processQueue(context Context, posts chan Post) {
 		}
 	}
 }
+
+func ellipsize(s string, length int) string {
+	if len(s) < length {
+		return s
+	}
+	return s[0:length - 3] + "..."
+}
