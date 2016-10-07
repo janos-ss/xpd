@@ -146,9 +146,9 @@ func processQueue(context Context, posts chan Post) {
 	post := <-posts
 	//	log.Printf("new post: feed=%s author=%s subject=%s\n", post.Feed.Id, post.Author, post.Subject)
 
+	repo.add(post)
 	for _, detector := range (context.detectors) {
 		possibleDuplicates := detector.findDuplicates(post, repo.findRecent())
-		repo.add(post)
 
 		for _, listener := range (context.listeners) {
 			listener.onDuplicates(post, possibleDuplicates)
