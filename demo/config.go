@@ -3,5 +3,5 @@ import (
 	"github.com/janos-ss/xpd"
 )
 func main() {
-	xpd.Run("./demo/feeds.yml")
+	xpd.Run("./xpd.yml")
 }

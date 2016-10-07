@@ -8,7 +8,7 @@ import (
 	"github.com/janos-ss/xpd"
 )
 
-const defaultConfigFile = "xpd.conf"
+const defaultConfigFile = "xpd.yml"
 
 type Params struct {
 	configfile string
@@ -23,7 +23,7 @@ func parseArgs() Params {
 	config := flag.String("config", defaultConfigFile, "path to configuration file")
 	flag.Parse()
 
-	return Params{config}
+	return Params{*config}
 }
 
 func main() {

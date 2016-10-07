@@ -44,6 +44,10 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	reader.newPosts = posts
 }
 
+func (reader *RssReader) GetFeed() Feed{
+	return Feed{}
+}
+
 func (reader *RssReader) GetNewPosts() []Post {
 	reader.newPosts = nil
 
