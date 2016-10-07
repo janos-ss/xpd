@@ -24,6 +24,27 @@ type Listener interface {
 	onDuplicates(Post, []Post)
 }
 
+type PostRepository interface {
+	findRecent() []Post
+	add(Post)
+}
+
+type simplePostRepository struct {
+	posts []Post
+}
+
+func NewSimplePostRepository() *simplePostRepository {
+	return &simplePostRepository{}
+}
+
+func (repo simplePostRepository) findRecent() []Post {
+	return repo.posts
+}
+
+func (repo *simplePostRepository) add(post Post) {
+	repo.posts = append(repo.posts, post)
+}
+
 type Context struct {
 	feeds     []Feed
 	readers   []FeedReader
