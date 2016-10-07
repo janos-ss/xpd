@@ -4,7 +4,6 @@ import (
 	"gopkg.in/yaml.v2"
 	"path/filepath"
 	"io/ioutil"
-	"fmt"
 	"log"
 	"time"
 )
@@ -76,6 +75,7 @@ func Run(configfile string) {
 	posts := make(chan Post)
 
 	for _, reader := range (context.readers) {
+		log.Printf("waitForpost for %s\n", reader.GetFeed().Id)
 		go waitForPosts(reader, posts)
 	}
 
@@ -104,11 +104,12 @@ func readContext(configfile string) Context {
 		panic(err)
 	}
 
-	fmt.Printf("Feeds: %#v\n", config.Feeds)
-	fmt.Printf("Detectors: %#v\n", config.Detectors)
+	log.Printf("Feeds: %#v\n", config.Feeds)
+	log.Printf("Detectors: %#v\n", config.Detectors)
 
 	readers := make([]FeedReader, 0)
 	for _, feed := range config.Feeds {
+		log.Printf("Creating reader for: %#v\n", feed.Id)
 		readers = append(readers, NewRssReader(feed.Url, &feed))
 	}
 	detectors := make([]Detector,0)
@@ -130,10 +131,12 @@ func readContext(configfile string) Context {
 func waitForPosts(reader FeedReader, posts chan <- Post) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for {
+		log.Printf("getting new posts for %s\n", reader.GetFeed().Id)
 		for _, post := range (reader.GetNewPosts()) {
 			posts <- post
 		}
-		time.Sleep(100 * time.Millisecond)
+		time.Sleep(1000 * time.Millisecond)
+
 	}
 }
 

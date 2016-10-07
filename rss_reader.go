@@ -1,11 +1,12 @@
 package xpd
 
 import (
-	"fmt"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"os"
 	"io"
 	"errors"
+	"log"
+	"fmt"
 )
 
 type RssReader struct {
@@ -15,6 +16,7 @@ type RssReader struct {
 	newPosts []Post
 }
 
+
 func NewRssReader(uri string, feed *Feed) *RssReader {
 	reader := RssReader{uri: uri, feed: feed}
 	timeout := 5
@@ -23,11 +25,11 @@ func NewRssReader(uri string, feed *Feed) *RssReader {
 }
 
 func (reader *RssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
-	fmt.Printf("%d new channel(s) in %s\n", len(newchannels), feed.Url)
+	log.Printf("%d new channel(s) in %s\n", len(newchannels), feed.Url)
 }
 
 func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
-	fmt.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
+	log.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
 
 	posts := make([]Post, 0)
 	for _, item := range (newitems) {
@@ -45,7 +47,7 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 }
 
 func (reader *RssReader) GetFeed() Feed{
-	return Feed{}
+	return *reader.feed
 }
 
 func (reader *RssReader) GetNewPosts() []Post {
