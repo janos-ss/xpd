@@ -15,3 +15,7 @@ Run
 
 Build binaries for multiple platforms
 -------------------------------------
+
+Run:
+
+    ./cmd/xpd/build.sh
