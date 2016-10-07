@@ -1,7 +1,0 @@
-feeds:
-  - id: feed1
-    url: http://localhost/feed1.xml
-  - id: feed2
-    url: http://localhost/feed2.xml
-detectors:
-  - sameBodyDetector
