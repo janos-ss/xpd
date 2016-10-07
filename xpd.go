@@ -20,7 +20,6 @@ type Post struct {
 type Feed struct {
 	Id    string
 	Url   string
-	Posts []Post
 }
 
 type FeedReader interface {
@@ -110,7 +109,7 @@ func readContext(configfile string) Context {
 	readers := make([]FeedReader, 0)
 	for _, feed := range config.Feeds {
 		log.Printf("Creating reader for: %#v\n", feed.Id)
-		readers = append(readers, NewRssReader(feed.Url, &feed))
+		readers = append(readers, NewRssReader(feed.Url, feed))
 	}
 	detectors := make([]Detector,0)
 	for _, detector := range config.Detectors {
