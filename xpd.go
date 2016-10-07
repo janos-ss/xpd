@@ -110,10 +110,10 @@ func readContext(configfile string) Context {
 		readers = append(readers, NewRssReader(feed.Url, &feed))
 	}
 
-	detectors := make([]Detector,0)
-	listeners := make([]Listener,0)
+	detectors := make([]Detector, 0)
+	listeners := make([]Listener, 0)
 
-	return Context{config.Feeds,readers,detectors,listeners,nil}
+	return Context{config.Feeds, readers, detectors, listeners, nil}
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
@@ -130,7 +130,7 @@ func processQueue(context Context, posts chan Post) {
 	repo := context.postRepository
 
 	post := <-posts
-//	log.Printf("new post: feed=%s author=%s subject=%s\n", post.Feed.Id, post.Author, post.Subject)
+	//	log.Printf("new post: feed=%s author=%s subject=%s\n", post.Feed.Id, post.Author, post.Subject)
 
 	for _, detector := range (context.detectors) {
 		possibleDuplicates := detector.findDuplicates(post, repo.findRecent())
