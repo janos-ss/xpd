@@ -7,3 +7,4 @@ feeds:
     url: http://localhost/so.xml
 detectors:
   - sameBodyDetector
+  - similarWordCountDetector
