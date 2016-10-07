@@ -4,13 +4,9 @@ import (
 	"testing"
 )
 
-func addPostToRepo(repo PostRepository, post Post) {
-	repo.add(post)
-}
-
 func Test_adding_to_repo(t*testing.T) {
-	repo := newSimplePostRepository()
-	addPostToRepo(repo, Post{})
+	var repo PostRepository = newSimplePostRepository()
+	repo.add(Post{})
 
 	if len(repo.findRecent()) == 0 {
 		t.Errorf("PostRepository should not be empty after post added")
