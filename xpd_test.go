@@ -50,3 +50,18 @@ func Test_splitToWords(t*testing.T) {
 		t.Fatalf("got %s; expected %s", actual, expected)
 	}
 }
+
+func Test_wordCounts(t*testing.T) {
+	s := "Hello World hello again"
+
+	expected := wordCountMap{
+		"hello": 2,
+		"world": 1,
+		"again": 1,
+	}
+	expectedTotal := 4
+
+	if actual, actualTotal := calcWordCounts(s); !reflect.DeepEqual(actual, expected) || actualTotal != expectedTotal {
+		t.Fatalf("got %v, %d; expected %v, %d", actual, actualTotal, expected, expectedTotal)
+	}
+}

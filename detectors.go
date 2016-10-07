@@ -36,13 +36,20 @@ func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Po
 
 func calcWordCounts(text string) (wordCountMap, int) {
 	wordCounts := make(wordCountMap)
-	// TODO
-	return wordCounts, 0
+	total := 0
+	for _, word := range (splitToWords(text)) {
+		if _, ok := wordCounts[word]; !ok {
+			wordCounts[word] = 0
+		}
+		wordCounts[word]++
+		total++
+	}
+	return wordCounts, total
 }
 
 func splitToWords(text string) []string {
 	r := regexp.MustCompile("[^a-z]+")
-	abc :=strings.TrimSpace(r.ReplaceAllString(strings.ToLower(text), " "))
+	abc := strings.TrimSpace(r.ReplaceAllString(strings.ToLower(text), " "))
 	return strings.Split(abc, " ")
 }
 
