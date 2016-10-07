@@ -86,6 +86,7 @@ func Run(configfile string) {
 
 type Config struct {
 	Feeds []Feed `yaml:"feeds,omitempty"`
+	Detectors []string `yaml:"detectors,omitempty"`
 }
 
 func readContext(configfile string) Context {
@@ -103,15 +104,25 @@ func readContext(configfile string) Context {
 		panic(err)
 	}
 
-	fmt.Printf("Value: %#v\n", config.Feeds)
+	fmt.Printf("Feeds: %#v\n", config.Feeds)
+	fmt.Printf("Detectors: %#v\n", config.Detectors)
 
 	readers := make([]FeedReader, 0)
 	for _, feed := range config.Feeds {
 		readers = append(readers, NewRssReader(feed.Url, &feed))
 	}
+	detectors := make([]Detector,0)
+	for _, detector := range config.Detectors {
+		switch detector {
+		case "sameBodyDetector":
+			detectors = append(detectors, sameBodyDetector{})
+		default:
+			panic("unrecognized detector")
+		}
+	}
 
-	detectors := make([]Detector, 0)
-	listeners := make([]Listener, 0)
+
+	listeners := make([]Listener,0)
 
 	return Context{config.Feeds, readers, detectors, listeners, nil}
 }

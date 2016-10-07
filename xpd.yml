@@ -1,0 +1,9 @@
+feeds:
+  - id: so
+    url: http://stackoverflow.com/feeds/tag?tagnames=sonarqube&sort=newest
+  - id: gg
+    url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
+  - id: so2
+    url: http://localhost/so.xml
+detectors:
+  - sameBodyDetector
