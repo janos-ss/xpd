@@ -116,6 +116,8 @@ func readContext(configfile string) Context {
 		switch detector {
 		case "sameBodyDetector":
 			detectors = append(detectors, sameBodyDetector{})
+		case "similarWordCountDetector":
+			detectors = append(detectors, similarWordCountDetector{})
 		default:
 			panic("unrecognized detector")
 		}
