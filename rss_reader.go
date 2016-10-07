@@ -32,6 +32,7 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	posts := make([]Post, 0)
 	for _, item := range (newitems) {
 		post := Post{
+			Id: item.Id,
 			Url: item.Id,
 			Author: item.Author.Name,
 			Subject: item.Title,

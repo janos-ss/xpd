@@ -1,6 +1,7 @@
 package xpd
 
 type Post struct {
+	Id      string
 	Url     string
 	Author  string
 	Subject string
@@ -49,7 +50,7 @@ func readContext() Context {
 	return Context{}
 }
 
-func waitForPosts(reader FeedReader, posts chan<- Post) {
+func waitForPosts(reader FeedReader, posts chan <- Post) {
 	for {
 		for _, post := range (reader.GetNewPosts()) {
 			posts <- post
