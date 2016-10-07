@@ -2,6 +2,7 @@ package xpd
 
 import (
 	"testing"
+	"reflect"
 )
 
 func Test_adding_to_repo(t*testing.T) {
@@ -51,6 +52,13 @@ func Test_ellipsize_someString_15_is_someString(t*testing.T) {
 func Test_ellipsize_someString_7_is_somedots(t*testing.T) {
 	s := "someString"
 	if actual, expected := ellipsize(s, 7), "some..."; actual != expected {
+		t.Fatalf("got %s; expected %s", actual, expected)
+	}
+}
+
+func Test_splitToWords(t*testing.T) {
+	s := "   @#$@hello THERE 4324%%%$# ouch  "
+	if actual, expected := splitToWords(s), []string{"hello", "there", "ouch"}; !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("got %s; expected %s", actual, expected)
 	}
 }
