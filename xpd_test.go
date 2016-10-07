@@ -65,3 +65,15 @@ func Test_wordCounts(t*testing.T) {
 		t.Fatalf("got %v, %d; expected %v, %d", actual, actualTotal, expected, expectedTotal)
 	}
 }
+
+func Test_similarEnoughCounts(t*testing.T) {
+	if !similarEnoughCounts(113, 115) {
+		t.Error("got 113, 115 are not similar enough, but should be")
+	}
+	if !similarEnoughCounts(1130, 1200) {
+		t.Error("got 1130, 1200 are not similar enough, but should be")
+	}
+	if similarEnoughCounts(1130, 1500) {
+		t.Error("got 1130, 1500 are similar enough, but should not be")
+	}
+}
