@@ -19,7 +19,7 @@ type RssReader struct {
 
 func NewRssReader(uri string, feed Feed) *RssReader {
 	reader := RssReader{uri: uri, feed: feed}
-	timeout := 5
+	timeout := 0
 	reader.rssFeed = rss.New(timeout, true, reader.chanHandler, reader.itemHandler)
 	return &reader
 }

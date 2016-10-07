@@ -18,8 +18,8 @@ type Post struct {
 }
 
 type Feed struct {
-	Id    string
-	Url   string
+	Id  string
+	Url string
 }
 
 type FeedReader interface {
@@ -84,7 +84,7 @@ func Run(configfile string) {
 }
 
 type Config struct {
-	Feeds []Feed `yaml:"feeds,omitempty"`
+	Feeds     []Feed `yaml:"feeds,omitempty"`
 	Detectors []string `yaml:"detectors,omitempty"`
 }
 
@@ -111,7 +111,7 @@ func readContext(configfile string) Context {
 		log.Printf("Creating reader for: %#v\n", feed.Id)
 		readers = append(readers, NewRssReader(feed.Url, feed))
 	}
-	detectors := make([]Detector,0)
+	detectors := make([]Detector, 0)
 	for _, detector := range config.Detectors {
 		switch detector {
 		case "sameBodyDetector":
@@ -121,8 +121,7 @@ func readContext(configfile string) Context {
 		}
 	}
 
-
-	listeners := make([]Listener,0)
+	listeners := make([]Listener, 0)
 
 	return Context{config.Feeds, readers, detectors, listeners, nil}
 }
@@ -130,12 +129,11 @@ func readContext(configfile string) Context {
 func waitForPosts(reader FeedReader, posts chan <- Post) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for {
-		log.Printf("getting new posts for %s\n", reader.GetFeed().Id)
+		//log.Printf("getting new posts for %s\n", reader.GetFeed().Id)
 		for _, post := range (reader.GetNewPosts()) {
 			posts <- post
 		}
 		time.Sleep(1000 * time.Millisecond)
-
 	}
 }
 
@@ -150,9 +148,10 @@ func processQueue(context Context, posts chan Post) {
 
 	for _, detector := range (context.detectors) {
 		possibleDuplicates := detector.findDuplicates(post, recent)
-
-		for _, listener := range (context.listeners) {
-			listener.onDuplicates(post, possibleDuplicates)
+		if len(possibleDuplicates) > 0 {
+			for _, listener := range (context.listeners) {
+				listener.onDuplicates(post, possibleDuplicates)
+			}
 		}
 	}
 }
