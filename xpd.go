@@ -1,6 +1,7 @@
 package xpd
 
 type Post struct {
+	Id      string
 	Url     string
 	Author  string
 	Subject string
@@ -16,11 +17,32 @@ type FeedReader interface {
 }
 
 type Detector interface {
-	findSimilar(Post, []Feed) []Post
+	findDuplicates(Post, []Feed) []Post
 }
 
 type Listener interface {
-	onSimilarDetected(Post, []Post)
+	onDuplicates(Post, []Post)
+}
+
+type PostRepository interface {
+	findRecent() []Post
+	add(Post)
+}
+
+type simplePostRepository struct {
+	posts []Post
+}
+
+func NewSimplePostRepository() *simplePostRepository {
+	return &simplePostRepository{}
+}
+
+func (repo simplePostRepository) findRecent() []Post {
+	return repo.posts
+}
+
+func (repo *simplePostRepository) add(post Post) {
+	repo.posts = append(repo.posts, post)
 }
 
 type Context struct {
@@ -49,7 +71,7 @@ func readContext() Context {
 	return Context{}
 }
 
-func waitForPosts(reader FeedReader, posts chan<- Post) {
+func waitForPosts(reader FeedReader, posts chan <- Post) {
 	for {
 		for _, post := range (reader.GetNewPosts()) {
 			posts <- post
@@ -60,9 +82,9 @@ func waitForPosts(reader FeedReader, posts chan<- Post) {
 func processQueue(context Context, posts chan Post) {
 	post := <-posts
 	for _, detector := range (context.detectors) {
-		similar := detector.findSimilar(post, context.feeds)
+		similar := detector.findDuplicates(post, context.feeds)
 		for _, listener := range (context.listeners) {
-			listener.onSimilarDetected(post, similar)
+			listener.onDuplicates(post, similar)
 		}
 	}
 }
