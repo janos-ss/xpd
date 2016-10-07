@@ -9,7 +9,7 @@ func addPostToRepo(repo PostRepository, post Post) {
 }
 
 func Test_adding_to_repo(t*testing.T) {
-	repo := NewSimplePostRepository()
+	repo := newSimplePostRepository()
 	addPostToRepo(repo, Post{})
 
 	if len(repo.findRecent()) == 0 {

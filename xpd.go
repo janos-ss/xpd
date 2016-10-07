@@ -17,7 +17,7 @@ type FeedReader interface {
 }
 
 type Detector interface {
-	findDuplicates(Post, []Feed) []Post
+	findDuplicates(Post, []Post) []Post
 }
 
 type Listener interface {
@@ -33,7 +33,7 @@ type simplePostRepository struct {
 	posts []Post
 }
 
-func NewSimplePostRepository() *simplePostRepository {
+func newSimplePostRepository() *simplePostRepository {
 	return &simplePostRepository{}
 }
 
@@ -80,11 +80,15 @@ func waitForPosts(reader FeedReader, posts chan <- Post) {
 }
 
 func processQueue(context Context, posts chan Post) {
+	repo := newSimplePostRepository()
+
 	post := <-posts
 	for _, detector := range (context.detectors) {
-		similar := detector.findDuplicates(post, context.feeds)
+		possibleDuplicates := detector.findDuplicates(post, repo.findRecent())
+		repo.add(post)
+
 		for _, listener := range (context.listeners) {
-			listener.onDuplicates(post, similar)
+			listener.onDuplicates(post, possibleDuplicates)
 		}
 	}
 }
