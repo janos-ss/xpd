@@ -63,6 +63,7 @@ func Run(configfile string) {
 
 	// TODO move this to readContext
 	context.postRepository = newSimplePostRepository()
+	context.listeners = append(context.listeners, consolePrinterListener{})
 
 	posts := make(chan Post)
 
