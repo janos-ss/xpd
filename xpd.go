@@ -1,18 +1,23 @@
 package xpd
 
+import "log"
+
 type Post struct {
 	Id      string
 	Url     string
 	Author  string
 	Subject string
 	Body    string
+	Feed    *Feed
 }
 
 type Feed struct {
+	Id    string
 	Posts []Post
 }
 
 type FeedReader interface {
+	GetFeed() Feed
 	GetNewPosts() []Post
 }
 
@@ -76,6 +81,7 @@ func readContext() Context {
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
+	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for {
 		for _, post := range (reader.GetNewPosts()) {
 			posts <- post
@@ -84,8 +90,10 @@ func waitForPosts(reader FeedReader, posts chan <- Post) {
 }
 
 func processQueue(context Context, posts chan Post) {
-	post := <-posts
 	repo := context.postRepository
+
+	post := <-posts
+	log.Printf("new post: feed=%s author=%s subject=%s\n", post.Feed.Id, post.Author, post.Subject)
 
 	for _, detector := range (context.detectors) {
 		possibleDuplicates := detector.findDuplicates(post, repo.findRecent())
