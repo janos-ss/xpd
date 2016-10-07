@@ -1,10 +1,9 @@
 feeds:
-  - id: so-sonarqube
-    #url: http://stackoverflow.com/feeds/tag?tagnames=sonarqube&sort=newest
-    url: http://localhost/feeds/so-sonarqube.xml
-  - id: gg-sonarqube
-    #url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
-    url: http://localhost/feeds/gg-sonarqube.xml
-  - id: gg-sonarqube-2
-    #url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
-    url: http://localhost/feeds/gg-sonarqube.xml
+  - id: so
+    url: http://stackoverflow.com/feeds/tag?tagnames=sonarqube&sort=newest
+  - id: gg
+    url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
+  - id: so2
+    url: http://localhost/so.xml
+detectors:
+  - sameBodyDetector
