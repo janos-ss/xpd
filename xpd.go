@@ -17,11 +17,11 @@ type FeedReader interface {
 }
 
 type Detector interface {
-	findSimilar(Post, []Feed) []Post
+	findDuplicates(Post, []Feed) []Post
 }
 
 type Listener interface {
-	onSimilarDetected(Post, []Post)
+	onDuplicates(Post, []Post)
 }
 
 type Context struct {
@@ -61,9 +61,9 @@ func waitForPosts(reader FeedReader, posts chan <- Post) {
 func processQueue(context Context, posts chan Post) {
 	post := <-posts
 	for _, detector := range (context.detectors) {
-		similar := detector.findSimilar(post, context.feeds)
+		similar := detector.findDuplicates(post, context.feeds)
 		for _, listener := range (context.listeners) {
-			listener.onSimilarDetected(post, similar)
+			listener.onDuplicates(post, similar)
 		}
 	}
 }
