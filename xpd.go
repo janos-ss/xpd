@@ -1,5 +1,12 @@
 package xpd
 
+import (
+	"gopkg.in/yaml.v2"
+	"path/filepath"
+	"io/ioutil"
+	"fmt"
+)
+
 type Post struct {
 	Id      string
 	Url     string
@@ -13,7 +20,7 @@ type Feed struct {
 }
 
 type FeedReader interface {
-	GetNewPosts() []Post
+	GetNewPosts([]Post) []Post
 }
 
 type Detector interface {
@@ -53,7 +60,7 @@ type Context struct {
 }
 
 func Run(configfile string) {
-	context := readContext()
+	context := readContext(configfile)
 
 	posts := make(chan Post)
 
@@ -66,14 +73,33 @@ func Run(configfile string) {
 	}
 }
 
-func readContext() Context {
-	// TODO read configuration and create context elements
+type Config struct {
+	Feeds []string `yaml:"feeds,omitempty"`
+}
+
+func readContext(configfile string) Context {
+	filename, _ := filepath.Abs(configfile)
+	yamlFile, err := ioutil.ReadFile(filename)
+
+	if err != nil {
+		panic(err)
+	}
+
+	var config Config
+
+	err = yaml.Unmarshal(yamlFile, &config)
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Printf("Value: %#v\n", config.Feeds)
+
 	return Context{}
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
 	for {
-		for _, post := range (reader.GetNewPosts()) {
+		for _, post := range (reader.GetNewPosts(make([]Post, 0))) {
 			posts <- post
 		}
 	}

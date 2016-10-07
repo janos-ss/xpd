@@ -79,12 +79,13 @@ func parseAndAppend(mbuf *bytes.Buffer, msgs []*mail.Message, debug bool) []*mai
 	return append(msgs, msg)
 }
 
-func GetNewPosts() []Post {
+
+func GetNewPosts(currentPosts []Post) []Post {
 	msgs, err := ReadFile("/data/sq.mbox",false)
 	if err != nil {
 		log.Print(err)
 	}
-	posts := make([]Post, len(msgs))
+	posts := make([]Post, 0)
 
 	for _,msg := range(msgs){
 		buf := new(bytes.Buffer)
@@ -95,8 +96,9 @@ func GetNewPosts() []Post {
 			Subject:msg.Header.Get("Subject"),
 			Body: body,
 		}
-		log.Print(post.Body)
-		posts = append(posts,post)
+		log.Print(post.Subject)
+		posts = append(posts, post)
+
 	}
 	return posts
 }

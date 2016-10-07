@@ -1,0 +1,3 @@
+feeds:
+  - http://stackoverflow.com/feeds/tag?tagnames=sonarqube&sort=newest
+  - https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
