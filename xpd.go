@@ -154,6 +154,7 @@ func processQueue(context Context, posts chan Post) {
 			for _, listener := range (context.listeners) {
 				listener.onDuplicates(post, possibleDuplicates)
 			}
+			break
 		}
 	}
 }
