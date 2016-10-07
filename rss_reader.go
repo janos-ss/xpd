@@ -39,6 +39,7 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 			Author: item.Author.Name,
 			Subject: item.Title,
 			Body: item.Description,
+			Feed: &reader.feed,
 		}
 		posts = append(posts, post)
 	}
