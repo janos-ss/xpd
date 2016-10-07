@@ -46,14 +46,18 @@ func (repo *simplePostRepository) add(post Post) {
 }
 
 type Context struct {
-	feeds     []Feed
-	readers   []FeedReader
-	detectors []Detector
-	listeners []Listener
+	feeds          []Feed
+	readers        []FeedReader
+	detectors      []Detector
+	listeners      []Listener
+	postRepository PostRepository
 }
 
 func Run(configfile string) {
 	context := readContext()
+
+	// TODO move this to readContext
+	context.postRepository = newSimplePostRepository()
 
 	posts := make(chan Post)
 
@@ -80,9 +84,9 @@ func waitForPosts(reader FeedReader, posts chan <- Post) {
 }
 
 func processQueue(context Context, posts chan Post) {
-	repo := newSimplePostRepository()
-
 	post := <-posts
+	repo := context.postRepository
+
 	for _, detector := range (context.detectors) {
 		possibleDuplicates := detector.findDuplicates(post, repo.findRecent())
 		repo.add(post)
