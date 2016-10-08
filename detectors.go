@@ -24,12 +24,13 @@ type wordCountMap map[string]int
 
 func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Post) []Post {
 	wordCounts, total := calcWordCounts(post.Body)
-	limit := float64(total) / 10
+	limitRatio := 0.1
+	limit := float64(total) * limitRatio
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
 		otherWordCounts, otherTotal := calcWordCounts(oldPost.Body)
-		if similarEnoughCounts(total, otherTotal) && similarEnough(wordCounts, otherWordCounts, limit) {
+		if similarEnoughCounts(total, otherTotal, limitRatio) && similarEnough(wordCounts, otherWordCounts, limit) {
 			duplicates = append(duplicates, oldPost);
 		}
 	}
@@ -55,10 +56,13 @@ func splitToWords(text string) []string {
 	return strings.Split(abc, " ")
 }
 
-func similarEnoughCounts(a, b int) bool {
-	ratio := float64(a) / float64(b)
-	interval := .1
-	return 1 - interval < ratio && ratio < 1 + interval
+func similarEnoughCounts(base, other int, limitRatio float64) bool {
+	interval := applyRatio(base, limitRatio)
+	return base - interval <= other && other <= base + interval
+}
+
+func applyRatio(base int, ratio float64) int {
+	return int(float64(base) * ratio)
 }
 
 func similarEnough(first, second wordCountMap, limit float64) bool {

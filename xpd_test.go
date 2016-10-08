@@ -67,14 +67,22 @@ func Test_wordCounts(t*testing.T) {
 }
 
 func Test_similarEnoughCounts(t*testing.T) {
-	if !similarEnoughCounts(113, 115) {
-		t.Error("got 113, 115 are not similar enough, but should be")
+	limitRatio := 0.1
+	base := 123
+	if other := base; !similarEnoughCounts(base, other, limitRatio) {
+		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if !similarEnoughCounts(1130, 1200) {
-		t.Error("got 1130, 1200 are not similar enough, but should be")
+	if b := base + applyRatio(base, limitRatio); !similarEnoughCounts(base, b, limitRatio) {
+		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, b)
 	}
-	if similarEnoughCounts(1130, 1500) {
-		t.Error("got 1130, 1500 are similar enough, but should not be")
+	if b := base - applyRatio(base, limitRatio); !similarEnoughCounts(base, b, limitRatio) {
+		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, b)
+	}
+	if b := base + applyRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, b, limitRatio) {
+		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, b)
+	}
+	if b := base - applyRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, b, limitRatio) {
+		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, b)
 	}
 }
 
