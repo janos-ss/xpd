@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-cd $(dirname "$0")
+cd "$(dirname "$0")"
 
 v=$1
 test "$v" || v=v0
