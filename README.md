@@ -48,7 +48,7 @@ Download dependencies:
 
 Create configuration: copy `xpd.yml.example` to `xpd.yml` and customize.
 
-Run:
+Run using the default configuration file (`xpd.yml`):
 
     go run cmp/xpd/main.go
 
