@@ -69,19 +69,19 @@ func Test_wordCounts(t*testing.T) {
 func Test_similarEnoughCounts(t*testing.T) {
 	limitRatio := 0.1
 	base := 123
-	if other := base; !similarEnoughCounts(base, other, limitRatio) {
+	if other := base; !similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if other := base + calcRatio(base, limitRatio); !similarEnoughCounts(base, other, limitRatio) {
+	if other := base + calcRatio(base, limitRatio); !similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if other := base - calcRatio(base, limitRatio); !similarEnoughCounts(base, other, limitRatio) {
+	if other := base - calcRatio(base, limitRatio); !similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if other := base + calcRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, other, limitRatio) {
+	if other := base + calcRatio(base, 1.1 * limitRatio); similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
 	}
-	if other := base - calcRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, other, limitRatio) {
+	if other := base - calcRatio(base, 1.1 * limitRatio); similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
 	}
 }
@@ -107,5 +107,32 @@ func Test_wordCountDiffs(t*testing.T) {
 
 	if actual := calcWordCountDiffs(second, first); actual != expectedDiffsRight {
 		t.Errorf("got %f; expected %f", actual, expectedDiffsRight)
+	}
+}
+
+func Test_similarWordCountDetector_with_rearranged_words(t*testing.T) {
+	post := Post{Body: "The quick brown fox jumps over the lazy dog"}
+	rearranged := []Post{Post{Body: "the lazy dog The quick brown fox jumps over"}}
+
+	if !reflect.DeepEqual(similarWordCountDetector{}.findDuplicates(post, rearranged), rearranged) {
+		t.Errorf("got '%v' not a duplicate of '%v', but it should be", rearranged[0].Body, post.Body)
+	}
+}
+
+func Test_similarWordCountDetector_with_deleted_words(t*testing.T) {
+	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
+	deleted := []Post{Post{Body: "The quick brown fox over the lazy dog filler filler"}}
+
+	if !reflect.DeepEqual(similarWordCountDetector{}.findDuplicates(post, deleted), deleted) {
+		t.Errorf("got '%v' not a duplicate of '%v', but it should be", deleted[0].Body, post.Body)
+	}
+}
+
+func Test_similarWordCountDetector_with_added_words(t*testing.T) {
+	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
+	added := []Post{Post{Body: "The quick brown fox jumps over the dumb lazy dog filler filler"}}
+
+	if !reflect.DeepEqual(similarWordCountDetector{}.findDuplicates(post, added), added) {
+		t.Errorf("got '%v' not a duplicate of '%v', but it should be", added[0].Body, post.Body)
 	}
 }

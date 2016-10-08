@@ -30,7 +30,7 @@ func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Po
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
 		otherWordCounts, otherTotal := calcWordCounts(oldPost.Body)
-		if similarEnoughCounts(total, otherTotal, limitRatio) && similarEnough(wordCounts, otherWordCounts, limit) {
+		if similarCounts(total, otherTotal, limitRatio) && similarWordCountMaps(wordCounts, otherWordCounts, limit) {
 			duplicates = append(duplicates, oldPost);
 		}
 	}
@@ -56,7 +56,7 @@ func splitToWords(text string) []string {
 	return strings.Split(abc, " ")
 }
 
-func similarEnoughCounts(base, other int, limitRatio float64) bool {
+func similarCounts(base, other int, limitRatio float64) bool {
 	interval := calcRatio(base, limitRatio)
 	return isWithinRange(other, base - interval, base + interval)
 }
@@ -69,7 +69,7 @@ func isWithinRange(target, start, end int) bool {
 	return start <= target && target <= end
 }
 
-func similarEnough(first, second wordCountMap, limit float64) bool {
+func similarWordCountMaps(first, second wordCountMap, limit float64) bool {
 	diffs := calcWordCountDiffs(first, second) + calcWordCountDiffs(second, first)
 	return diffs < limit
 }
