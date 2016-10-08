@@ -1,6 +1,5 @@
 package xpd
 
-
 import (
 	"bufio"
 	"bytes"
@@ -9,7 +8,6 @@ import (
 	"net/mail"
 	"os"
 )
-
 
 const _MAX_LINE_LEN = 1024
 
@@ -79,15 +77,14 @@ func parseAndAppend(mbuf *bytes.Buffer, msgs []*mail.Message, debug bool) []*mai
 	return append(msgs, msg)
 }
 
-
 func GetNewPosts(currentPosts []Post) []Post {
-	msgs, err := ReadFile("/data/sq.mbox",false)
+	msgs, err := ReadFile("/data/sq.mbox", false)
 	if err != nil {
 		log.Print(err)
 	}
 	posts := make([]Post, 0)
 
-	for _,msg := range(msgs){
+	for _, msg := range (msgs) {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(msg.Body)
 		body := buf.String()

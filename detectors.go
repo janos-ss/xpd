@@ -68,7 +68,7 @@ func similarEnough(first, second wordCountMap, limit float64) bool {
 
 func calcWordCountDiffs(first, second wordCountMap) float64 {
 	var diffs float64 = 0
-	for word, count := range(first) {
+	for word, count := range (first) {
 		otherCount, ok := second[word]
 		if ok {
 			diffs += math.Abs(float64(count - otherCount)) / 2

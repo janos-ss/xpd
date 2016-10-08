@@ -17,7 +17,6 @@ type RssReader struct {
 	newPosts []Post
 }
 
-
 func NewRssReader(uri string, feed Feed) *RssReader {
 	reader := RssReader{uri: uri, feed: feed}
 	timeout := 0
@@ -54,7 +53,7 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	reader.newPosts = posts
 }
 
-func (reader *RssReader) GetFeed() Feed{
+func (reader *RssReader) GetFeed() Feed {
 	return reader.feed
 }
 
