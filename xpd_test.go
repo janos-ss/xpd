@@ -72,17 +72,17 @@ func Test_similarEnoughCounts(t*testing.T) {
 	if other := base; !similarEnoughCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if b := base + applyRatio(base, limitRatio); !similarEnoughCounts(base, b, limitRatio) {
-		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, b)
+	if other := base + calcRatio(base, limitRatio); !similarEnoughCounts(base, other, limitRatio) {
+		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if b := base - applyRatio(base, limitRatio); !similarEnoughCounts(base, b, limitRatio) {
-		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, b)
+	if other := base - calcRatio(base, limitRatio); !similarEnoughCounts(base, other, limitRatio) {
+		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if b := base + applyRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, b, limitRatio) {
-		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, b)
+	if other := base + calcRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, other, limitRatio) {
+		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
 	}
-	if b := base - applyRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, b, limitRatio) {
-		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, b)
+	if other := base - calcRatio(base, 1.1 * limitRatio); similarEnoughCounts(base, other, limitRatio) {
+		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
 	}
 }
 

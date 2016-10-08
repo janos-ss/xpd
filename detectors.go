@@ -57,12 +57,16 @@ func splitToWords(text string) []string {
 }
 
 func similarEnoughCounts(base, other int, limitRatio float64) bool {
-	interval := applyRatio(base, limitRatio)
-	return base - interval <= other && other <= base + interval
+	interval := calcRatio(base, limitRatio)
+	return isWithinRange(other, base - interval, base + interval)
 }
 
-func applyRatio(base int, ratio float64) int {
+func calcRatio(base int, ratio float64) int {
 	return int(float64(base) * ratio)
+}
+
+func isWithinRange(target, start, end int) bool {
+	return start <= target && target <= end
 }
 
 func similarEnough(first, second wordCountMap, limit float64) bool {
