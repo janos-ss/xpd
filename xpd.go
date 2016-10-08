@@ -129,17 +129,21 @@ func createContext(config Config) Context {
 
 func parseDetectors(detectorNames []string) []Detector {
 	detectors := make([]Detector, 0)
-	for _, detector := range detectorNames {
-		switch detector {
-		case "sameBodyDetector":
-			detectors = append(detectors, sameBodyDetector{})
-		case "similarWordCountDetector":
-			detectors = append(detectors, similarWordCountDetector{})
-		default:
-			panic("unrecognized detector")
-		}
+	for _, name := range detectorNames {
+		detectors = append(detectors, parseDetectorName(name))
 	}
 	return detectors
+}
+
+func parseDetectorName(name string) Detector {
+	switch name {
+	case "sameBodyDetector":
+		return sameBodyDetector{}
+	case "similarWordCountDetector":
+		return similarWordCountDetector{}
+	default:
+		panic("unrecognized detector")
+	}
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
