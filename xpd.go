@@ -69,10 +69,6 @@ func Run(configfile string) {
 
 	context := createContext(config)
 
-	// TODO move this to readContext
-	context.postRepository = newSimplePostRepository()
-	context.listeners = append(context.listeners, consolePrinterListener{})
-
 	posts := make(chan Post)
 
 	for _, reader := range context.readers {
@@ -129,9 +125,15 @@ func createContext(config Config) Context {
 		}
 	}
 
-	listeners := make([]Listener, 0)
+	listeners := []Listener{consolePrinterListener{}}
 
-	return Context{config.Feeds, readers, detectors, listeners, nil}
+	return Context{
+		feeds: config.Feeds,
+		readers: readers,
+		detectors: detectors,
+		listeners: listeners,
+		postRepository: newSimplePostRepository(),
+	}
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
