@@ -10,7 +10,7 @@ type sameBodyDetector struct{}
 
 func (detector sameBodyDetector) findDuplicates(post Post, oldPosts []Post) []Post {
 	duplicates := make([]Post, 0)
-	for _, oldPost := range (oldPosts) {
+	for _, oldPost := range oldPosts {
 		if post.Body == oldPost.Body {
 			duplicates = append(duplicates, oldPost);
 		}
@@ -27,7 +27,7 @@ func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Po
 	limit := float64(total) / 10
 
 	duplicates := make([]Post, 0)
-	for _, oldPost := range (oldPosts) {
+	for _, oldPost := range oldPosts {
 		otherWordCounts, otherTotal := calcWordCounts(oldPost.Body)
 		if similarEnoughCounts(total, otherTotal) && similarEnough(wordCounts, otherWordCounts, limit) {
 			duplicates = append(duplicates, oldPost);
@@ -39,7 +39,7 @@ func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Po
 func calcWordCounts(text string) (wordCountMap, int) {
 	wordCounts := make(wordCountMap)
 	total := 0
-	for _, word := range (splitToWords(text)) {
+	for _, word := range splitToWords(text) {
 		if _, ok := wordCounts[word]; !ok {
 			wordCounts[word] = 0
 		}
@@ -68,7 +68,7 @@ func similarEnough(first, second wordCountMap, limit float64) bool {
 
 func calcWordCountDiffs(first, second wordCountMap) float64 {
 	var diffs float64 = 0
-	for word, count := range (first) {
+	for word, count := range first {
 		otherCount, ok := second[word]
 		if ok {
 			diffs += math.Abs(float64(count - otherCount)) / 2

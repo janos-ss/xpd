@@ -38,7 +38,7 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	log.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
 
 	posts := make([]Post, 0)
-	for _, item := range (newitems) {
+	for _, item := range newitems {
 		post := Post{
 			Id: item.Id,
 			Url: item.Id,

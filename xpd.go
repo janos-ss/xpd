@@ -73,7 +73,7 @@ func Run(configfile string) {
 
 	posts := make(chan Post)
 
-	for _, reader := range (context.readers) {
+	for _, reader := range context.readers {
 		log.Printf("waitForpost for %s\n", reader.GetFeed().Id)
 		go waitForPosts(reader, posts)
 	}
@@ -132,7 +132,7 @@ func waitForPosts(reader FeedReader, posts chan <- Post) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for {
 		//log.Printf("getting new posts for %s\n", reader.GetFeed().Id)
-		for _, post := range (reader.GetNewPosts()) {
+		for _, post := range reader.GetNewPosts() {
 			posts <- post
 		}
 		time.Sleep(1000 * time.Millisecond)
@@ -148,10 +148,10 @@ func processQueue(context Context, posts chan Post) {
 
 	repo.add(post)
 
-	for _, detector := range (context.detectors) {
+	for _, detector := range context.detectors {
 		possibleDuplicates := detector.findDuplicates(post, recent)
 		if len(possibleDuplicates) > 0 {
-			for _, listener := range (context.listeners) {
+			for _, listener := range context.listeners {
 				listener.onDuplicates(post, possibleDuplicates)
 			}
 			break

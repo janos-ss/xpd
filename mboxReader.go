@@ -84,7 +84,7 @@ func GetNewPosts(currentPosts []Post) []Post {
 	}
 	posts := make([]Post, 0)
 
-	for _, msg := range (msgs) {
+	for _, msg := range msgs {
 		buf := new(bytes.Buffer)
 		buf.ReadFrom(msg.Body)
 		body := buf.String()
