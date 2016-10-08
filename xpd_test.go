@@ -136,3 +136,17 @@ func Test_similarWordCountDetector_with_added_words(t*testing.T) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", added[0].Body, post.Body)
 	}
 }
+
+func Test_detectorRepository(t*testing.T) {
+	detector := similarWordCountDetector{}
+
+	repo := newDetectorRepository()
+	repo.register(detector)
+
+	if d := repo.get("similarWordCountDetector"); d != detector {
+		t.Errorf("got %#v, expected %#v", d, detector)
+	}
+	if d := repo.get("nonexistent"); d != nil {
+		t.Errorf("got %#v, expected %#v", d, nil)
+	}
+}

@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"log"
 	"time"
+	"reflect"
 )
 
 type Post struct {
@@ -29,6 +30,28 @@ type FeedReader interface {
 
 type Detector interface {
 	findDuplicates(Post, []Post) []Post
+}
+
+type DetectorRepository interface {
+	register(Detector)
+	get(string) Detector
+}
+
+type detectorRepository struct {
+	detectors map[string]Detector
+}
+
+func newDetectorRepository() DetectorRepository {
+	return detectorRepository{make(map[string]Detector)}
+}
+
+func (repo detectorRepository) register(detector Detector) {
+	name := reflect.TypeOf(detector).Name()
+	repo.detectors[name] = detector
+}
+
+func (repo detectorRepository) get(name string) Detector {
+	return repo.detectors[name]
 }
 
 type Listener interface {
