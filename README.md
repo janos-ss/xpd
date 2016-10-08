@@ -50,7 +50,7 @@ Create configuration: copy `xpd.yml.example` to `xpd.yml` and customize.
 
 Run using the default configuration file (`xpd.yml`):
 
-    go run cmp/xpd/main.go
+    ./run.sh
 
 To generate test coverage report, run:
 
