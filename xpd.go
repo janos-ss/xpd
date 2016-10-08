@@ -82,8 +82,8 @@ func Run(configfile string) {
 }
 
 type Config struct {
-	Feeds     []Feed `yaml:"feeds,omitempty"`
-	Detectors []string `yaml:"detectors,omitempty"`
+	Feeds         []Feed `yaml:"feeds,omitempty"`
+	DetectorNames []string `yaml:"detectors,omitempty"`
 }
 
 func readConfig(configfile string) Config {
@@ -102,7 +102,7 @@ func readConfig(configfile string) Config {
 	}
 
 	log.Printf("Feeds: %#v\n", config.Feeds)
-	log.Printf("Detectors: %#v\n", config.Detectors)
+	log.Printf("Detectors: %#v\n", config.DetectorNames)
 
 	return config
 }
@@ -114,7 +114,7 @@ func createContext(config Config) Context {
 		readers = append(readers, NewRssReader(feed.Url, feed))
 	}
 
-	detectors := parseDetectors(config.Detectors)
+	detectors := parseDetectors(config.DetectorNames)
 
 	listeners := []Listener{consolePrinterListener{}}
 
@@ -164,6 +164,7 @@ func processQueue(context Context, posts chan Post) {
 		possibleDuplicates := detector.findDuplicates(post, recent)
 		if len(possibleDuplicates) > 0 {
 			for _, listener := range context.listeners {
+				// TODO add Detector ref as param
 				listener.onDuplicates(post, possibleDuplicates)
 			}
 			break
