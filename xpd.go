@@ -113,17 +113,8 @@ func createContext(config Config) Context {
 		log.Printf("Creating reader for: %#v\n", feed.Id)
 		readers = append(readers, NewRssReader(feed.Url, feed))
 	}
-	detectors := make([]Detector, 0)
-	for _, detector := range config.Detectors {
-		switch detector {
-		case "sameBodyDetector":
-			detectors = append(detectors, sameBodyDetector{})
-		case "similarWordCountDetector":
-			detectors = append(detectors, similarWordCountDetector{})
-		default:
-			panic("unrecognized detector")
-		}
-	}
+
+	detectors := parseDetectors(config.Detectors)
 
 	listeners := []Listener{consolePrinterListener{}}
 
@@ -134,6 +125,21 @@ func createContext(config Config) Context {
 		listeners: listeners,
 		postRepository: newSimplePostRepository(),
 	}
+}
+
+func parseDetectors(detectorNames []string) []Detector {
+	detectors := make([]Detector, 0)
+	for _, detector := range detectorNames {
+		switch detector {
+		case "sameBodyDetector":
+			detectors = append(detectors, sameBodyDetector{})
+		case "similarWordCountDetector":
+			detectors = append(detectors, similarWordCountDetector{})
+		default:
+			panic("unrecognized detector")
+		}
+	}
+	return detectors
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
