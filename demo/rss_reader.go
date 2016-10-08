@@ -2,7 +2,7 @@ package main
 
 import (
 	"fmt"
-	"github.com/janos-ss/xpd"
+	"github.com/xpd-org/xpd"
 )
 
 func main() {

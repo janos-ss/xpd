@@ -5,7 +5,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
-	"github.com/janos-ss/xpd"
+	"github.com/xpd-org/xpd"
 )
 
 const defaultConfigFile = "xpd.yml"
