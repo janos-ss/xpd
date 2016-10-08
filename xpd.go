@@ -131,7 +131,6 @@ func readContext(configfile string) Context {
 func waitForPosts(reader FeedReader, posts chan <- Post) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for {
-		//log.Printf("getting new posts for %s\n", reader.GetFeed().Id)
 		for _, post := range reader.GetNewPosts() {
 			posts <- post
 		}
