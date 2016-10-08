@@ -65,7 +65,9 @@ type Context struct {
 }
 
 func Run(configfile string) {
-	context := readContext(configfile)
+	config := readConfig(configfile)
+
+	context := createContext(config)
 
 	// TODO move this to readContext
 	context.postRepository = newSimplePostRepository()
@@ -88,7 +90,7 @@ type Config struct {
 	Detectors []string `yaml:"detectors,omitempty"`
 }
 
-func readContext(configfile string) Context {
+func readConfig(configfile string) Config {
 	filename, _ := filepath.Abs(configfile)
 	yamlFile, err := ioutil.ReadFile(filename)
 
@@ -106,6 +108,10 @@ func readContext(configfile string) Context {
 	log.Printf("Feeds: %#v\n", config.Feeds)
 	log.Printf("Detectors: %#v\n", config.Detectors)
 
+	return config
+}
+
+func createContext(config Config) Context {
 	readers := make([]FeedReader, 0)
 	for _, feed := range config.Feeds {
 		log.Printf("Creating reader for: %#v\n", feed.Id)
