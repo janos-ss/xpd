@@ -144,7 +144,6 @@ func processQueue(context Context, posts chan Post) {
 	recent := repo.findRecent()
 
 	post := <-posts
-	//	log.Printf("new post: feed=%s author=%s subject=%s\n", post.Feed.Id, post.Author, post.Subject)
 
 	repo.add(post)
 
