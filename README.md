@@ -5,10 +5,8 @@ Analyze a configurable collection of feeds to detect cross-posts and react to th
 
 > **cross-post**
 >
-> *verb*
->
+> *verb*:
 > post (a message, link, image, etc.) to more than one online location, such as a blog, social media website, or forum.
->
 > *"the app is set up so that you can easily cross-post your item on Craigslist too"*
 
 Download and run
