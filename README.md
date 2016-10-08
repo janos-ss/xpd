@@ -58,4 +58,4 @@ To generate test coverage report, run:
 
 To rebuild the binaries for multiple platforms, run:
 
-    ./cmd/xpd/build.sh
+    ./rebuild-all.sh
