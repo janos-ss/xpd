@@ -150,3 +150,27 @@ func Test_simpleDetectorRepository(t*testing.T) {
 		t.Errorf("got %#v, expected %#v", d, nil)
 	}
 }
+
+func Test_parseDetectors(t*testing.T) {
+	detectors := parseDetectors([]string{"sameBodyDetector", "similarWordCountDetector"})
+	expected := []Detector{sameBodyDetector{}, similarWordCountDetector{}}
+
+	if !reflect.DeepEqual(detectors, expected) {
+		t.Errorf("got %#v, expected %#v", detectors, expected)
+	}
+}
+
+func Test_parseDetectors_crash_if_unknown(t*testing.T) {
+	assertPanic(t, "did not crash on unknown Detector, but it should have", func() {
+		parseDetectors([]string{"nonexistent"})
+	})
+}
+
+func assertPanic(t *testing.T, message string, f func()) {
+	defer func() {
+		if r := recover(); r == nil {
+			t.Errorf(message)
+		}
+	}()
+	f()
+}
