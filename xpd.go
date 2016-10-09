@@ -98,7 +98,6 @@ func Run(configfile string) {
 	posts := make(chan Post)
 
 	for _, reader := range context.readers {
-		log.Printf("waitForpost for %s\n", reader.GetFeed().Id)
 		go waitForPosts(reader, posts)
 	}
 
