@@ -14,7 +14,7 @@ func Test_adding_to_repo(t*testing.T) {
 	}
 }
 
-func Test_sameBodyDetector_findDuplicates_finds_same_body(t*testing.T) {
+func Test_SameBodyDetector_FindDuplicates_finds_same_body(t*testing.T) {
 	body := "some text"
 	differentBody := body + " blah"
 
@@ -110,7 +110,7 @@ func Test_wordCountDiffs(t*testing.T) {
 	}
 }
 
-func Test_similarWordCountDetector_with_rearranged_words(t*testing.T) {
+func Test_SimilarWordCountDetector_with_rearranged_words(t*testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog"}
 	rearranged := []Post{Post{Body: "the lazy dog The quick brown fox jumps over"}}
 
@@ -119,7 +119,7 @@ func Test_similarWordCountDetector_with_rearranged_words(t*testing.T) {
 	}
 }
 
-func Test_similarWordCountDetector_with_deleted_words(t*testing.T) {
+func Test_SimilarWordCountDetector_with_deleted_words(t*testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
 	deleted := []Post{Post{Body: "The quick brown fox over the lazy dog filler filler"}}
 
@@ -128,7 +128,7 @@ func Test_similarWordCountDetector_with_deleted_words(t*testing.T) {
 	}
 }
 
-func Test_similarWordCountDetector_with_added_words(t*testing.T) {
+func Test_SimilarWordCountDetector_with_added_words(t*testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
 	added := []Post{Post{Body: "The quick brown fox jumps over the dumb lazy dog filler filler"}}
 
@@ -178,7 +178,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 	f()
 }
 
-func Test_createContext(t*testing.T) {
+func Test_CreateContext(t*testing.T) {
 	config := Config{
 		Feeds: []Feed{
 			Feed{Id: "dummy1", Url: "dummy1"},
@@ -210,7 +210,7 @@ func Test_createContext(t*testing.T) {
 	}
 }
 
-func Test_readConfig_valid_example(t*testing.T) {
+func Test_ReadConfig_valid_example(t*testing.T) {
 	config := ReadConfig("xpd.yml.example")
 
 	if len(config.Feeds) < 1 {
@@ -221,13 +221,13 @@ func Test_readConfig_valid_example(t*testing.T) {
 	}
 }
 
-func Test_readConfig_nonexistent_should_crash(t*testing.T) {
+func Test_ReadConfig_nonexistent_should_crash(t*testing.T) {
 	assertPanic(t, "did not crash on non-existent config file, but it should have", func() {
 		ReadConfig("nonexistent")
 	})
 }
 
-func Test_readConfig_malformed_should_crash(t*testing.T) {
+func Test_ReadConfig_malformed_should_crash(t*testing.T) {
 	assertPanic(t, "did not crash on malformed config file, but it should have", func() {
 		ReadConfig("xpd.go")
 	})
