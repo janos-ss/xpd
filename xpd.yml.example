@@ -6,5 +6,5 @@ feeds:
   - id: testing
     url: http://localhost/feeds/testing.xml
 detectors:
-  - sameBodyDetector
-  - similarWordCountDetector
+  - SameBodyDetector
+  - SimilarWordCountDetector

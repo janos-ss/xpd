@@ -29,5 +29,5 @@ func parseArgs() Params {
 func main() {
 	params := parseArgs()
 
-	xpd.Run(params.configfile)
+	xpd.RunForever(params.configfile)
 }

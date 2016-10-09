@@ -10,28 +10,28 @@ import (
 	"fmt"
 )
 
-type RssReader struct {
+type rssReader struct {
 	uri      string
 	feed     Feed
 	rssFeed  *rss.Feed
 	newPosts []Post
 }
 
-func NewRssReader(uri string, feed Feed) *RssReader {
-	reader := RssReader{uri: uri, feed: feed}
+func NewRssReader(uri string, feed Feed) FeedReader {
+	reader := rssReader{uri: uri, feed: feed}
 	timeout := 0
 	reader.rssFeed = rss.New(timeout, true, reader.chanHandler, reader.itemHandler)
 	return &reader
 }
 
-func (reader *RssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
+func (reader *rssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
 	ct.ResetColor()
 	defer ct.ResetColor()
 	ct.ChangeColor(ct.Blue, true, ct.None, false)
 	log.Printf("%d new channel(s) in %s\n", len(newchannels), feed.Url)
 }
 
-func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
+func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
 	ct.ResetColor()
 	defer ct.ResetColor()
 	ct.ChangeColor(ct.Green, true, ct.None, false)
@@ -53,11 +53,11 @@ func (reader *RssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	reader.newPosts = posts
 }
 
-func (reader *RssReader) GetFeed() Feed {
+func (reader *rssReader) GetFeed() Feed {
 	return reader.feed
 }
 
-func (reader *RssReader) FetchNewPosts() []Post {
+func (reader *rssReader) FetchNewPosts() []Post {
 	reader.newPosts = nil
 
 	if err := reader.rssFeed.Fetch(reader.uri, charsetReader); err != nil {

@@ -5,9 +5,9 @@ import (
 	ct "github.com/daviddengcn/go-colortext"
 )
 
-type consolePrinterListener struct{}
+type ConsolePrinterListener struct{}
 
-func (listener consolePrinterListener) onDuplicates(post Post, oldPosts []Post) {
+func (listener ConsolePrinterListener) OnDuplicates(post Post, oldPosts []Post) {
 	ct.ResetColor()
 	defer ct.ResetColor()
 	ct.ChangeColor(ct.Red, true, ct.None, false)

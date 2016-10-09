@@ -6,9 +6,9 @@ import (
 	"math"
 )
 
-type sameBodyDetector struct{}
+type SameBodyDetector struct{}
 
-func (detector sameBodyDetector) findDuplicates(post Post, oldPosts []Post) []Post {
+func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
 		if post.Body == oldPost.Body {
@@ -18,11 +18,11 @@ func (detector sameBodyDetector) findDuplicates(post Post, oldPosts []Post) []Po
 	return duplicates
 }
 
-type similarWordCountDetector struct{}
+type SimilarWordCountDetector struct{}
 
 type wordCountMap map[string]int
 
-func (detector similarWordCountDetector) findDuplicates(post Post, oldPosts []Post) []Post {
+func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
 	wordCounts, total := calcWordCounts(post.Body)
 	limitRatio := 0.1
 	limit := float64(total) * limitRatio

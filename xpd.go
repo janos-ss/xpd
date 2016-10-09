@@ -29,28 +29,28 @@ type FeedReader interface {
 }
 
 type Detector interface {
-	findDuplicates(Post, []Post) []Post
+	FindDuplicates(Post, []Post) []Post
 }
 
 type DetectorRegistry interface {
-	register(Detector)
-	get(string) Detector
+	Register(Detector)
+	Get(string) Detector
 }
 
-type simpleDetectorRegistry struct {
+type defaultDetectorRegistry struct {
 	detectors map[string]Detector
 }
 
-func newSimpleDetectorRegistry() DetectorRegistry {
-	return simpleDetectorRegistry{make(map[string]Detector)}
+func NewDetectorRegistry() DetectorRegistry {
+	return defaultDetectorRegistry{make(map[string]Detector)}
 }
 
-func (reg simpleDetectorRegistry) register(detector Detector) {
+func (reg defaultDetectorRegistry) Register(detector Detector) {
 	name := reflect.TypeOf(detector).Name()
 	reg.detectors[name] = detector
 }
 
-func (reg simpleDetectorRegistry) get(name string) Detector {
+func (reg defaultDetectorRegistry) Get(name string) Detector {
 	if detector, ok := reg.detectors[name]; ok {
 		return detector
 	}
@@ -58,52 +58,52 @@ func (reg simpleDetectorRegistry) get(name string) Detector {
 }
 
 type Listener interface {
-	onDuplicates(Post, []Post)
+	OnDuplicates(Post, []Post)
 }
 
 type PostRepository interface {
-	findRecent() []Post
-	add(Post)
+	FindRecent() []Post
+	Add(Post)
 }
 
-type simplePostRepository struct {
+type defaultPostRepository struct {
 	posts []Post
 }
 
-func newSimplePostRepository() *simplePostRepository {
-	return &simplePostRepository{}
+func NewPostRepository() PostRepository {
+	return &defaultPostRepository{}
 }
 
-func (repo simplePostRepository) findRecent() []Post {
+func (repo defaultPostRepository) FindRecent() []Post {
 	return repo.posts
 }
 
-func (repo *simplePostRepository) add(post Post) {
+func (repo *defaultPostRepository) Add(post Post) {
 	repo.posts = append(repo.posts, post)
 }
 
 type Context struct {
-	readers        []FeedReader
-	detectors      []Detector
-	listeners      []Listener
-	postRepository PostRepository
+	Readers        []FeedReader
+	Detectors      []Detector
+	Listeners      []Listener
+	PostRepository PostRepository
 }
 
-const MaxUint = ^uint(0)
-const MaxInt = int(MaxUint >> 1)
+const maxUint = ^uint(0)
+const MaxInt = int(maxUint >> 1)
 
-func Run(configfile string) {
-	run(createContext(readConfig(configfile)), MaxInt)
+func RunForever(configfile string) {
+	run(CreateContext(ReadConfig(configfile)), MaxInt)
 }
 
 func run(context Context, count int) {
 	posts := make(chan Post)
 
-	for _, reader := range context.readers {
+	for _, reader := range context.Readers {
 		go waitForPosts(reader, posts, count)
 	}
 
-	for i := 0; i < count * len(context.readers); i++ {
+	for i := 0; i < count * len(context.Readers); i++ {
 		post := <-posts
 		processNewPost(context, post)
 	}
@@ -114,7 +114,7 @@ type Config struct {
 	DetectorNames []string `yaml:"detectors,omitempty"`
 }
 
-func readConfig(configfile string) Config {
+func ReadConfig(configfile string) Config {
 	filename, _ := filepath.Abs(configfile)
 	yamlFile, err := ioutil.ReadFile(filename)
 
@@ -135,33 +135,33 @@ func readConfig(configfile string) Config {
 	return config
 }
 
-func createContext(config Config) Context {
+func CreateContext(config Config) Context {
 	readers := make([]FeedReader, 0)
 	for _, feed := range config.Feeds {
 		log.Printf("Creating reader for: %#v\n", feed.Id)
 		readers = append(readers, NewRssReader(feed.Url, feed))
 	}
 
-	detectorRegistry := newSimpleDetectorRegistry()
-	detectorRegistry.register(sameBodyDetector{})
-	detectorRegistry.register(similarWordCountDetector{})
+	detectorRegistry := NewDetectorRegistry()
+	detectorRegistry.Register(SameBodyDetector{})
+	detectorRegistry.Register(SimilarWordCountDetector{})
 
 	detectors := getDetectors(detectorRegistry, config.DetectorNames)
 
-	listeners := []Listener{consolePrinterListener{}}
+	listeners := []Listener{ConsolePrinterListener{}}
 
 	return Context{
-		readers: readers,
-		detectors: detectors,
-		listeners: listeners,
-		postRepository: newSimplePostRepository(),
+		Readers: readers,
+		Detectors: detectors,
+		Listeners: listeners,
+		PostRepository: NewPostRepository(),
 	}
 }
 
 func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
 	detectors := make([]Detector, 0)
 	for _, name := range detectorNames {
-		detectors = append(detectors, reg.get(name))
+		detectors = append(detectors, reg.Get(name))
 	}
 	return detectors
 }
@@ -177,21 +177,21 @@ func waitForPosts(reader FeedReader, posts chan <- Post, count int) {
 }
 
 func processNewPost(context Context, post Post) {
-	repo := context.postRepository
-	recent := repo.findRecent()
+	repo := context.PostRepository
+	recent := repo.FindRecent()
 
-	for _, detector := range context.detectors {
-		possibleDuplicates := detector.findDuplicates(post, recent)
+	for _, detector := range context.Detectors {
+		possibleDuplicates := detector.FindDuplicates(post, recent)
 		if len(possibleDuplicates) > 0 {
-			for _, listener := range context.listeners {
+			for _, listener := range context.Listeners {
 				// TODO add Detector ref as param
-				listener.onDuplicates(post, possibleDuplicates)
+				listener.OnDuplicates(post, possibleDuplicates)
 			}
 			break
 		}
 	}
 
-	repo.add(post)
+	repo.Add(post)
 }
 
 func ellipsize(s string, length int) string {

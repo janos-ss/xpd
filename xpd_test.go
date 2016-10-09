@@ -6,10 +6,10 @@ import (
 )
 
 func Test_adding_to_repo(t*testing.T) {
-	var repo PostRepository = newSimplePostRepository()
-	repo.add(Post{})
+	var repo PostRepository = NewPostRepository()
+	repo.Add(Post{})
 
-	if len(repo.findRecent()) == 0 {
+	if len(repo.FindRecent()) == 0 {
 		t.Errorf("PostRepository should not be empty after post added")
 	}
 }
@@ -20,12 +20,12 @@ func Test_sameBodyDetector_findDuplicates_finds_same_body(t*testing.T) {
 
 	post := Post{Body: body}
 
-	var repo PostRepository = newSimplePostRepository()
-	repo.add(post)
-	repo.add(Post{Body: differentBody})
+	var repo PostRepository = NewPostRepository()
+	repo.Add(post)
+	repo.Add(Post{Body: differentBody})
 
-	var detector Detector = sameBodyDetector{}
-	if ! reflect.DeepEqual(detector.findDuplicates(post, []Post{post}), []Post{post}) {
+	var detector Detector = SameBodyDetector{}
+	if ! reflect.DeepEqual(detector.FindDuplicates(post, []Post{post}), []Post{post}) {
 		t.Errorf("same-body-detector should find only the match")
 	}
 }
@@ -114,7 +114,7 @@ func Test_similarWordCountDetector_with_rearranged_words(t*testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog"}
 	rearranged := []Post{Post{Body: "the lazy dog The quick brown fox jumps over"}}
 
-	if !reflect.DeepEqual(similarWordCountDetector{}.findDuplicates(post, rearranged), rearranged) {
+	if !reflect.DeepEqual(SimilarWordCountDetector{}.FindDuplicates(post, rearranged), rearranged) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", rearranged[0].Body, post.Body)
 	}
 }
@@ -123,7 +123,7 @@ func Test_similarWordCountDetector_with_deleted_words(t*testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
 	deleted := []Post{Post{Body: "The quick brown fox over the lazy dog filler filler"}}
 
-	if !reflect.DeepEqual(similarWordCountDetector{}.findDuplicates(post, deleted), deleted) {
+	if !reflect.DeepEqual(SimilarWordCountDetector{}.FindDuplicates(post, deleted), deleted) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", deleted[0].Body, post.Body)
 	}
 }
@@ -132,33 +132,33 @@ func Test_similarWordCountDetector_with_added_words(t*testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
 	added := []Post{Post{Body: "The quick brown fox jumps over the dumb lazy dog filler filler"}}
 
-	if !reflect.DeepEqual(similarWordCountDetector{}.findDuplicates(post, added), added) {
+	if !reflect.DeepEqual(SimilarWordCountDetector{}.FindDuplicates(post, added), added) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", added[0].Body, post.Body)
 	}
 }
 
-func Test_simpleDetectorRegistry(t*testing.T) {
-	detector := similarWordCountDetector{}
+func Test_DefaultDetectorRegistry(t*testing.T) {
+	detector := SimilarWordCountDetector{}
 
-	reg := newSimpleDetectorRegistry()
-	reg.register(detector)
+	reg := NewDetectorRegistry()
+	reg.Register(detector)
 
-	if d := reg.get("similarWordCountDetector"); d != detector {
+	if d := reg.Get("SimilarWordCountDetector"); d != detector {
 		t.Errorf("got %#v, expected %#v", d, detector)
 	}
 
 	assertPanic(t, "did not crash on unknown Detector, but it should have", func() {
-		reg.get("nonexistent")
+		reg.Get("nonexistent")
 	})
 }
 
 func Test_getDetectors(t*testing.T) {
-	reg := newSimpleDetectorRegistry()
-	reg.register(sameBodyDetector{})
-	reg.register(similarWordCountDetector{})
+	reg := NewDetectorRegistry()
+	reg.Register(SameBodyDetector{})
+	reg.Register(SimilarWordCountDetector{})
 
-	detectors := getDetectors(reg, []string{"sameBodyDetector", "similarWordCountDetector"})
-	expected := []Detector{sameBodyDetector{}, similarWordCountDetector{}}
+	detectors := getDetectors(reg, []string{"SameBodyDetector", "SimilarWordCountDetector"})
+	expected := []Detector{SameBodyDetector{}, SimilarWordCountDetector{}}
 
 	if !reflect.DeepEqual(detectors, expected) {
 		t.Errorf("got %#v, expected %#v", detectors, expected)
@@ -184,34 +184,34 @@ func Test_createContext(t*testing.T) {
 			Feed{Id: "dummy1", Url: "dummy1"},
 			Feed{Id: "dummy2", Url: "dummy2"},
 		},
-		DetectorNames: []string{"sameBodyDetector"},
+		DetectorNames: []string{"SameBodyDetector"},
 	}
-	context := createContext(config)
+	context := CreateContext(config)
 
-	if len(context.readers) != len(config.Feeds) {
-		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.readers, config.Feeds)
+	if len(context.Readers) != len(config.Feeds) {
+		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.Readers, config.Feeds)
 	}
-	if len(context.readers) < 1 {
+	if len(context.Readers) < 1 {
 		t.Error("got no feed readers, expected at least 1")
 	}
 
-	if len(context.detectors) != len(config.DetectorNames) {
-		t.Errorf("got different number of detectors than specified names; %#v <- %#v", context.detectors, config.DetectorNames)
+	if len(context.Detectors) != len(config.DetectorNames) {
+		t.Errorf("got different number of detectors than specified names; %#v <- %#v", context.Detectors, config.DetectorNames)
 	}
-	if len(context.detectors) < 1 {
+	if len(context.Detectors) < 1 {
 		t.Error("got no detectors, expected at least 1")
 	}
 
-	if len(context.listeners) < 1 {
+	if len(context.Listeners) < 1 {
 		t.Error("got no listeners, expected at least 1")
 	}
-	if context.postRepository == nil {
+	if context.PostRepository == nil {
 		t.Error("got nil PostRepository, expected non-nil")
 	}
 }
 
 func Test_readConfig_valid_example(t*testing.T) {
-	config := readConfig("xpd.yml.example")
+	config := ReadConfig("xpd.yml.example")
 
 	if len(config.Feeds) < 1 {
 		t.Error("got no feeds, expected at least 1")
@@ -223,13 +223,13 @@ func Test_readConfig_valid_example(t*testing.T) {
 
 func Test_readConfig_nonexistent_should_crash(t*testing.T) {
 	assertPanic(t, "did not crash on non-existent config file, but it should have", func() {
-		readConfig("nonexistent")
+		ReadConfig("nonexistent")
 	})
 }
 
 func Test_readConfig_malformed_should_crash(t*testing.T) {
 	assertPanic(t, "did not crash on malformed config file, but it should have", func() {
-		readConfig("xpd.go")
+		ReadConfig("xpd.go")
 	})
 }
 
@@ -237,7 +237,7 @@ type mockListener struct {
 	invoked bool
 }
 
-func (listener *mockListener) onDuplicates(Post, []Post) {
+func (listener *mockListener) OnDuplicates(Post, []Post) {
 	listener.invoked = true
 }
 
@@ -245,19 +245,19 @@ func Test_processPost(t*testing.T) {
 	post := Post{}
 
 	listener := &mockListener{}
-	repo := newSimplePostRepository()
+	repo := NewPostRepository()
 
 	context := Context{
-		detectors: []Detector{sameBodyDetector{}},
-		listeners: []Listener{listener},
-		postRepository: repo,
+		Detectors: []Detector{SameBodyDetector{}},
+		Listeners: []Listener{listener},
+		PostRepository: repo,
 	}
 
 	processNewPost(context, post)
 	if listener.invoked {
 		t.Error("mock listener was invoked, but should not have been")
 	}
-	if len(repo.findRecent()) != 1 {
+	if len(repo.FindRecent()) != 1 {
 		t.Fatal("got != 1 recent posts, expected one dummy post added")
 	}
 
@@ -265,7 +265,7 @@ func Test_processPost(t*testing.T) {
 	if !listener.invoked {
 		t.Error("mock listener should have been invoked, but it was not")
 	}
-	if len(repo.findRecent()) != 2 {
+	if len(repo.FindRecent()) != 2 {
 		t.Fatal("got != 2 recent posts, expected the dummy post added twice")
 	}
 }
@@ -300,18 +300,18 @@ func Test_run(t*testing.T) {
 
 	reader := &mockReader{post: post}
 	listener := &mockListener{}
-	repo := newSimplePostRepository()
+	repo := NewPostRepository()
 
 	context := Context{
-		readers: []FeedReader{reader},
-		detectors: []Detector{sameBodyDetector{}},
-		listeners: []Listener{listener},
-		postRepository: repo,
+		Readers: []FeedReader{reader},
+		Detectors: []Detector{SameBodyDetector{}},
+		Listeners: []Listener{listener},
+		PostRepository: repo,
 	}
 
 	run(context, 1)
 
-	if !reflect.DeepEqual([]Post{post}, repo.findRecent()) {
-		t.Fatalf("got %#v, expected []Post{%#v}", repo.findRecent(), post)
+	if !reflect.DeepEqual([]Post{post}, repo.FindRecent()) {
+		t.Fatalf("got %#v, expected []Post{%#v}", repo.FindRecent(), post)
 	}
 }
