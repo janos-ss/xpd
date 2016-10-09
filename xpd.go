@@ -90,17 +90,17 @@ type Context struct {
 }
 
 func Run(configfile string) {
-	config := readConfig(configfile)
+	run(createContext(readConfig(configfile)), -1)
+}
 
-	context := createContext(config)
-
+func run(context Context, count int) {
 	posts := make(chan Post)
 
 	for _, reader := range context.readers {
-		go waitForPosts(reader, posts, -1)
+		go waitForPosts(reader, posts, count)
 	}
 
-	for {
+	for i := 0; i < count * len(context.readers); i++ {
 		post := <-posts
 		processNewPost(context, post)
 	}

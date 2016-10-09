@@ -294,3 +294,24 @@ func Test_waitForPosts(t*testing.T) {
 		t.Fatalf("got %#v, expected %#v", received, post)
 	}
 }
+
+func Test_run(t*testing.T) {
+	post := Post{}
+
+	reader := &mockReader{post: post}
+	listener := &mockListener{}
+	repo := newSimplePostRepository()
+
+	context := Context{
+		readers: []FeedReader{reader},
+		detectors: []Detector{sameBodyDetector{}},
+		listeners: []Listener{listener},
+		postRepository: repo,
+	}
+
+	run(context, 1)
+
+	if !reflect.DeepEqual([]Post{post}, repo.findRecent()) {
+		t.Fatalf("got %#v, expected []Post{%#v}", repo.findRecent(), post)
+	}
+}
