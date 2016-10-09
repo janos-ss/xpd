@@ -137,10 +137,10 @@ func Test_similarWordCountDetector_with_added_words(t*testing.T) {
 	}
 }
 
-func Test_detectorRepository(t*testing.T) {
+func Test_simpleDetectorRepository(t*testing.T) {
 	detector := similarWordCountDetector{}
 
-	repo := newDetectorRepository()
+	repo := newSimpleDetectorRepository()
 	repo.register(detector)
 
 	if d := repo.get("similarWordCountDetector"); d != detector {

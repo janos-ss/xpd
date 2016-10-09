@@ -37,20 +37,20 @@ type DetectorRepository interface {
 	get(string) Detector
 }
 
-type detectorRepository struct {
+type simpleDetectorRepository struct {
 	detectors map[string]Detector
 }
 
-func newDetectorRepository() DetectorRepository {
-	return detectorRepository{make(map[string]Detector)}
+func newSimpleDetectorRepository() DetectorRepository {
+	return simpleDetectorRepository{make(map[string]Detector)}
 }
 
-func (repo detectorRepository) register(detector Detector) {
+func (repo simpleDetectorRepository) register(detector Detector) {
 	name := reflect.TypeOf(detector).Name()
 	repo.detectors[name] = detector
 }
 
-func (repo detectorRepository) get(name string) Detector {
+func (repo simpleDetectorRepository) get(name string) Detector {
 	return repo.detectors[name]
 }
 
