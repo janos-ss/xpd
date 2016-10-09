@@ -210,7 +210,7 @@ func Test_createContext(t*testing.T) {
 	}
 }
 
-func Test_readConfig(t*testing.T) {
+func Test_readConfig_valid_example(t*testing.T) {
 	config := readConfig("xpd.yml.example")
 
 	if len(config.Feeds) < 1 {
@@ -219,4 +219,16 @@ func Test_readConfig(t*testing.T) {
 	if len(config.DetectorNames) < 1 {
 		t.Error("got no detectors, expected at least 1")
 	}
+}
+
+func Test_readConfig_nonexistent_should_crash(t*testing.T) {
+	assertPanic(t, "did not crash on non-existent config file, but it should have", func() {
+		readConfig("nonexistent")
+	})
+}
+
+func Test_readConfig_malformed_should_crash(t*testing.T) {
+	assertPanic(t, "did not crash on malformed config file, but it should have", func() {
+		readConfig("xpd.go")
+	})
 }
