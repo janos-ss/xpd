@@ -232,3 +232,40 @@ func Test_readConfig_malformed_should_crash(t*testing.T) {
 		readConfig("xpd.go")
 	})
 }
+
+type mockListener struct {
+	invoked bool
+}
+
+func (listener *mockListener) onDuplicates(Post, []Post) {
+	listener.invoked = true
+}
+
+func Test_processPost(t*testing.T) {
+	post := Post{Body: "dummy"}
+
+	listener := &mockListener{}
+	repo := newSimplePostRepository()
+
+	context := Context{
+		detectors: []Detector{sameBodyDetector{}},
+		listeners: []Listener{listener},
+		postRepository: repo,
+	}
+
+	processNewPost(context, post)
+	if listener.invoked {
+		t.Error("mock listener was invoked, but should not have been")
+	}
+	if len(repo.findRecent()) != 1 {
+		t.Fatal("got != 1 recent posts, expected one dummy post added")
+	}
+
+	processNewPost(context, post)
+	if !listener.invoked {
+		t.Error("mock listener should have been invoked, but it was not")
+	}
+	if len(repo.findRecent()) != 2 {
+		t.Fatal("got != 2 recent posts, expected the dummy post added twice")
+	}
+}

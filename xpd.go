@@ -101,7 +101,8 @@ func Run(configfile string) {
 	}
 
 	for {
-		processQueue(context, posts)
+		post := <-posts
+		processNewPost(context, post)
 	}
 }
 
@@ -172,13 +173,9 @@ func waitForPosts(reader FeedReader, posts chan <- Post) {
 	}
 }
 
-func processQueue(context Context, posts chan Post) {
+func processNewPost(context Context, post Post) {
 	repo := context.postRepository
 	recent := repo.findRecent()
-
-	post := <-posts
-
-	repo.add(post)
 
 	for _, detector := range context.detectors {
 		possibleDuplicates := detector.findDuplicates(post, recent)
@@ -190,6 +187,8 @@ func processQueue(context Context, posts chan Post) {
 			break
 		}
 	}
+
+	repo.add(post)
 }
 
 func ellipsize(s string, length int) string {
