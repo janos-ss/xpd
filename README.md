@@ -9,6 +9,11 @@ Analyze a configurable collection of feeds to detect cross-posts and react to th
 > post (a message, link, image, etc.) to more than one online location, such as a blog, social media website, or forum.
 > *"the app is set up so that you can easily cross-post your item on Craigslist too"*
 
+TODO
+----
+
+See the [public Trello board](https://trello.com/b/UVF2R2tl/cross-post-detector) for planned upcoming features.
+
 Download and run
 ----------------
 
@@ -22,8 +27,8 @@ Create a configuration like [this](https://github.com/xpd-org/xpd/blob/master/xp
       - id: gg-sonarqube
         url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
     detectors:
-      - sameBodyDetector
-      - similarWordCountDetector
+      - SameBodyDetector
+      - SimilarWordCountDetector
 
 Edit the list of `feeds`:
 
@@ -36,8 +41,8 @@ Edit the list of `detectors`:
 - The algorithms are tried in their defined order.
   Note that when a detector finds suspected cross-posts, the remaining detectors are skipped. This may be improved in a future release.
 - The currently supported algorithms:
-    - `sameBodyDetector` matches posts with the exact same text body
-    - `similarWordCountDetector` matches posts with similar count of the same words (&plusmn;10% of total word count)
+    - `SameBodyDetector` matches posts with the exact same text body
+    - `SimilarWordCountDetector` matches posts with similar count of the same words (&plusmn;10% of total word count)
 
 Develop
 -------
