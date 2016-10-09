@@ -16,5 +16,5 @@ func (listener consolePrinterListener) onDuplicates(post Post, oldPosts []Post) 
 	for _, oldPost := range oldPosts {
 		log.Printf("  of: (%s:) %s (%s)\n", oldPost.Feed.Id, oldPost.Subject, oldPost.Id)
 	}
-	log.Println("--------------------")
+	log.Println("------------------------------------------------------------")
 }

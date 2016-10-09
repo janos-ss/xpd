@@ -89,8 +89,11 @@ type Context struct {
 	postRepository PostRepository
 }
 
+const MaxUint = ^uint(0)
+const MaxInt = int(MaxUint >> 1)
+
 func Run(configfile string) {
-	run(createContext(readConfig(configfile)), -1)
+	run(createContext(readConfig(configfile)), MaxInt)
 }
 
 func run(context Context, count int) {
@@ -163,9 +166,9 @@ func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
 	return detectors
 }
 
-func waitForPosts(reader FeedReader, posts chan <- Post, limit int) {
+func waitForPosts(reader FeedReader, posts chan <- Post, count int) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
-	for i := 0; i < limit; i++ {
+	for i := 0; i < count; i++ {
 		for _, post := range reader.FetchNewPosts() {
 			posts <- post
 		}
