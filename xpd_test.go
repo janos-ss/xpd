@@ -242,7 +242,7 @@ func (listener *mockListener) onDuplicates(Post, []Post) {
 }
 
 func Test_processPost(t*testing.T) {
-	post := Post{Body: "dummy"}
+	post := Post{}
 
 	listener := &mockListener{}
 	repo := newSimplePostRepository()
