@@ -32,26 +32,26 @@ type Detector interface {
 	findDuplicates(Post, []Post) []Post
 }
 
-type DetectorRepository interface {
+type DetectorRegistry interface {
 	register(Detector)
 	get(string) Detector
 }
 
-type simpleDetectorRepository struct {
+type simpleDetectorRegistry struct {
 	detectors map[string]Detector
 }
 
-func newSimpleDetectorRepository() DetectorRepository {
-	return simpleDetectorRepository{make(map[string]Detector)}
+func newSimpleDetectorRegistry() DetectorRegistry {
+	return simpleDetectorRegistry{make(map[string]Detector)}
 }
 
-func (repo simpleDetectorRepository) register(detector Detector) {
+func (reg simpleDetectorRegistry) register(detector Detector) {
 	name := reflect.TypeOf(detector).Name()
-	repo.detectors[name] = detector
+	reg.detectors[name] = detector
 }
 
-func (repo simpleDetectorRepository) get(name string) Detector {
-	return repo.detectors[name]
+func (reg simpleDetectorRegistry) get(name string) Detector {
+	return reg.detectors[name]
 }
 
 type Listener interface {
