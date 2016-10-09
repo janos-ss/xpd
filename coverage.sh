@@ -2,6 +2,6 @@
 
 set -x
 cd "$(dirname "$0")"
-mkdir -p tmp
-go test -coverprofile tmp/cover.out
-go tool cover -html=tmp/cover.out -o tmp/cover.html
+mkdir -p target
+go test -coverprofile target/cover.out
+go tool cover -html=target/cover.out -o target/cover.html
