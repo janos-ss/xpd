@@ -83,7 +83,6 @@ func (repo *simplePostRepository) add(post Post) {
 }
 
 type Context struct {
-	feeds          []Feed
 	readers        []FeedReader
 	detectors      []Detector
 	listeners      []Listener
@@ -148,7 +147,6 @@ func createContext(config Config) Context {
 	listeners := []Listener{consolePrinterListener{}}
 
 	return Context{
-		feeds: config.Feeds,
 		readers: readers,
 		detectors: detectors,
 		listeners: listeners,
