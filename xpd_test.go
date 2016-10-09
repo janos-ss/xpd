@@ -269,3 +269,28 @@ func Test_processPost(t*testing.T) {
 		t.Fatal("got != 2 recent posts, expected the dummy post added twice")
 	}
 }
+
+type mockReader struct {
+	post Post
+}
+
+func (reader *mockReader) GetFeed() Feed {
+	return Feed{Id: "dummy"}
+}
+
+func (reader *mockReader) GetNewPosts() []Post {
+	return []Post{Post{}}
+}
+
+func Test_waitForPosts(t*testing.T) {
+	post := Post{}
+
+	reader := &mockReader{post: post}
+	posts := make(chan Post)
+
+	go waitForPosts(reader, posts, 1)
+
+	if received := <-posts; received != post {
+		t.Fatalf("got %#v, expected %#v", received, post)
+	}
+}

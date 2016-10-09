@@ -97,7 +97,7 @@ func Run(configfile string) {
 	posts := make(chan Post)
 
 	for _, reader := range context.readers {
-		go waitForPosts(reader, posts)
+		go waitForPosts(reader, posts, -1)
 	}
 
 	for {
@@ -163,9 +163,9 @@ func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
 	return detectors
 }
 
-func waitForPosts(reader FeedReader, posts chan <- Post) {
+func waitForPosts(reader FeedReader, posts chan <- Post, limit int) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
-	for {
+	for i := 0; i < limit; i++ {
 		for _, post := range reader.GetNewPosts() {
 			posts <- post
 		}
