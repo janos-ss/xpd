@@ -209,3 +209,14 @@ func Test_createContext(t*testing.T) {
 		t.Error("got nil PostRepository, expected non-nil")
 	}
 }
+
+func Test_readConfig(t*testing.T) {
+	config := readConfig("xpd.yml.example")
+
+	if len(config.Feeds) < 1 {
+		t.Error("got no feeds, expected at least 1")
+	}
+	if len(config.DetectorNames) < 1 {
+		t.Error("got no detectors, expected at least 1")
+	}
+}
