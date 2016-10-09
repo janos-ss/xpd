@@ -180,7 +180,10 @@ func assertPanic(t *testing.T, message string, f func()) {
 
 func Test_createContext(t*testing.T) {
 	config := Config{
-		Feeds: []Feed{},
+		Feeds: []Feed{
+			Feed{Id: "dummy1", Url: "dummy1"},
+			Feed{Id: "dummy2", Url: "dummy2"},
+		},
 		DetectorNames: []string{"sameBodyDetector"},
 	}
 	context := createContext(config)
@@ -188,9 +191,17 @@ func Test_createContext(t*testing.T) {
 	if len(context.readers) != len(config.Feeds) {
 		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.readers, config.Feeds)
 	}
+	if len(context.readers) < 1 {
+		t.Error("got no feed readers, expected at least 1")
+	}
+
 	if len(context.detectors) != len(config.DetectorNames) {
 		t.Errorf("got different number of detectors than specified names; %#v <- %#v", context.detectors, config.DetectorNames)
 	}
+	if len(context.detectors) < 1 {
+		t.Error("got no detectors, expected at least 1")
+	}
+
 	if len(context.listeners) < 1 {
 		t.Error("got no listeners, expected at least 1")
 	}
