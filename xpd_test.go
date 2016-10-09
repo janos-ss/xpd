@@ -140,29 +140,32 @@ func Test_similarWordCountDetector_with_added_words(t*testing.T) {
 func Test_simpleDetectorRegistry(t*testing.T) {
 	detector := similarWordCountDetector{}
 
-	repo := newSimpleDetectorRegistry()
-	repo.register(detector)
+	reg := newSimpleDetectorRegistry()
+	reg.register(detector)
 
-	if d := repo.get("similarWordCountDetector"); d != detector {
+	if d := reg.get("similarWordCountDetector"); d != detector {
 		t.Errorf("got %#v, expected %#v", d, detector)
 	}
-	if d := repo.get("nonexistent"); d != nil {
-		t.Errorf("got %#v, expected %#v", d, nil)
-	}
+
+	assertPanic(t, "did not crash on unknown Detector, but it should have", func() {
+		reg.get("nonexistent")
+	})
 }
 
-func Test_parseDetectors(t*testing.T) {
-	detectors := parseDetectors([]string{"sameBodyDetector", "similarWordCountDetector"})
+func Test_getDetectors(t*testing.T) {
+	reg := newSimpleDetectorRegistry()
+	reg.register(sameBodyDetector{})
+	reg.register(similarWordCountDetector{})
+
+	detectors := getDetectors(reg, []string{"sameBodyDetector", "similarWordCountDetector"})
 	expected := []Detector{sameBodyDetector{}, similarWordCountDetector{}}
 
 	if !reflect.DeepEqual(detectors, expected) {
 		t.Errorf("got %#v, expected %#v", detectors, expected)
 	}
-}
 
-func Test_parseDetectors_crash_if_unknown(t*testing.T) {
 	assertPanic(t, "did not crash on unknown Detector, but it should have", func() {
-		parseDetectors([]string{"nonexistent"})
+		getDetectors(reg, []string{"nonexistent"})
 	})
 }
 

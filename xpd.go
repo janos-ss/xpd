@@ -51,7 +51,10 @@ func (reg simpleDetectorRegistry) register(detector Detector) {
 }
 
 func (reg simpleDetectorRegistry) get(name string) Detector {
-	return reg.detectors[name]
+	if detector, ok := reg.detectors[name]; ok {
+		return detector
+	}
+	panic("no such detector: " + name)
 }
 
 type Listener interface {
@@ -137,7 +140,11 @@ func createContext(config Config) Context {
 		readers = append(readers, NewRssReader(feed.Url, feed))
 	}
 
-	detectors := parseDetectors(config.DetectorNames)
+	detectorRegistry := newSimpleDetectorRegistry()
+	detectorRegistry.register(sameBodyDetector{})
+	detectorRegistry.register(similarWordCountDetector{})
+
+	detectors := getDetectors(detectorRegistry, config.DetectorNames)
 
 	listeners := []Listener{consolePrinterListener{}}
 
@@ -150,23 +157,12 @@ func createContext(config Config) Context {
 	}
 }
 
-func parseDetectors(detectorNames []string) []Detector {
+func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
 	detectors := make([]Detector, 0)
 	for _, name := range detectorNames {
-		detectors = append(detectors, parseDetectorName(name))
+		detectors = append(detectors, reg.get(name))
 	}
 	return detectors
-}
-
-func parseDetectorName(name string) Detector {
-	switch name {
-	case "sameBodyDetector":
-		return sameBodyDetector{}
-	case "similarWordCountDetector":
-		return similarWordCountDetector{}
-	default:
-		panic("unrecognized detector")
-	}
 }
 
 func waitForPosts(reader FeedReader, posts chan <- Post) {
