@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	xpd.GetNewPosts(make([]xpd.Post, 0))
+	xpd.FetchNewPosts(make([]xpd.Post, 0))
 }

@@ -57,7 +57,7 @@ func (reader *RssReader) GetFeed() Feed {
 	return reader.feed
 }
 
-func (reader *RssReader) GetNewPosts() []Post {
+func (reader *RssReader) FetchNewPosts() []Post {
 	reader.newPosts = nil
 
 	if err := reader.rssFeed.Fetch(reader.uri, charsetReader); err != nil {

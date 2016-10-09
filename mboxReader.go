@@ -77,7 +77,7 @@ func parseAndAppend(mbuf *bytes.Buffer, msgs []*mail.Message, debug bool) []*mai
 	return append(msgs, msg)
 }
 
-func GetNewPosts(currentPosts []Post) []Post {
+func FetchNewPosts(currentPosts []Post) []Post {
 	msgs, err := ReadFile("/data/sq.mbox", false)
 	if err != nil {
 		log.Print(err)

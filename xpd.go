@@ -25,7 +25,7 @@ type Feed struct {
 
 type FeedReader interface {
 	GetFeed() Feed
-	GetNewPosts() []Post
+	FetchNewPosts() []Post
 }
 
 type Detector interface {
@@ -166,7 +166,7 @@ func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
 func waitForPosts(reader FeedReader, posts chan <- Post, limit int) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for i := 0; i < limit; i++ {
-		for _, post := range reader.GetNewPosts() {
+		for _, post := range reader.FetchNewPosts() {
 			posts <- post
 		}
 		time.Sleep(1000 * time.Millisecond)

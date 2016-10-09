@@ -278,7 +278,7 @@ func (reader *mockReader) GetFeed() Feed {
 	return Feed{Id: "dummy"}
 }
 
-func (reader *mockReader) GetNewPosts() []Post {
+func (reader *mockReader) FetchNewPosts() []Post {
 	return []Post{Post{}}
 }
 

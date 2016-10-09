@@ -13,7 +13,7 @@ func main() {
 }
 
 func getAndPrintNewPosts(reader xpd.FeedReader) {
-	for _, post := range reader.GetNewPosts() {
+	for _, post := range reader.FetchNewPosts() {
 		fmt.Println(post.Author)
 	}
 }
