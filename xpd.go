@@ -138,11 +138,7 @@ func ReadConfig(configfile string) Config {
 }
 
 func CreateContext(config Config) Context {
-	readers := make([]FeedReader, 0)
-	for _, feed := range config.Feeds {
-		log.Printf("Creating reader for: %#v\n", feed.Id)
-		readers = append(readers, NewRssReader(feed.Url, feed))
-	}
+	readers := getReaders(config)
 
 	detectorRegistry := NewDetectorRegistry()
 	detectorRegistry.Register(SameBodyDetector{})
@@ -158,6 +154,15 @@ func CreateContext(config Config) Context {
 		Listeners: listeners,
 		PostRepository: NewPostRepository(),
 	}
+}
+
+func getReaders(config Config) []FeedReader {
+	readers := make([]FeedReader, 0)
+	for _, feed := range config.Feeds {
+		log.Printf("Creating reader for: %#v\n", feed.Id)
+		readers = append(readers, NewRssReader(feed.Url, feed))
+	}
+	return readers
 }
 
 func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
