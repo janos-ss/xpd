@@ -93,7 +93,9 @@ const maxUint = ^uint(0)
 const MaxInt = int(maxUint >> 1)
 
 func RunForever(configfile string) {
-	run(CreateContext(ReadConfig(configfile)), MaxInt)
+	context := CreateContext(ReadConfig(configfile))
+	count := MaxInt / len(context.Readers)
+	run(context, count)
 }
 
 func run(context Context, count int) {
