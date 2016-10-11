@@ -10,6 +10,11 @@ import (
 
 const defaultConfigFile = "xpd.yml"
 
+func exit() {
+	flag.Usage()
+	os.Exit(1)
+}
+
 type Params struct {
 	configfile string
 }
@@ -20,10 +25,14 @@ func parseArgs() Params {
 		flag.PrintDefaults()
 	}
 
-	config := flag.String("config", defaultConfigFile, "path to configuration file")
+	configfilePtr := flag.String("config", defaultConfigFile, "path to configuration file")
 	flag.Parse()
 
-	return Params{*config}
+	if len(flag.Args()) != 0 {
+		exit()
+	}
+
+	return Params{*configfilePtr}
 }
 
 func main() {
