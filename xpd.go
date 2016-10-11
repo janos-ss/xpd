@@ -9,6 +9,9 @@ import (
 	"reflect"
 )
 
+// poll RSS feeds once per 15 minutes
+const rss_polling_millis = 1000 * 60 * 15
+
 type Post struct {
 	Id      string
 	Url     string
@@ -179,7 +182,7 @@ func waitForPosts(reader FeedReader, posts chan <- Post, count int) {
 		for _, post := range reader.FetchNewPosts() {
 			posts <- post
 		}
-		time.Sleep(1000 * time.Millisecond)
+		time.Sleep(rss_polling_millis * time.Millisecond)
 	}
 }
 
