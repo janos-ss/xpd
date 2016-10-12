@@ -2,11 +2,11 @@ package xpd
 
 import (
 	"gopkg.in/yaml.v2"
-	"path/filepath"
 	"io/ioutil"
 	"log"
-	"time"
+	"path/filepath"
 	"reflect"
+	"time"
 )
 
 // poll RSS feeds once per 15 minutes
@@ -108,14 +108,14 @@ func run(context Context, count int) {
 		go waitForPosts(reader, posts, count)
 	}
 
-	for i := 0; i < count * len(context.Readers); i++ {
+	for i := 0; i < count*len(context.Readers); i++ {
 		post := <-posts
 		processNewPost(context, post)
 	}
 }
 
 type Config struct {
-	Feeds         []Feed `yaml:"feeds,omitempty"`
+	Feeds         []Feed   `yaml:"feeds,omitempty"`
 	DetectorNames []string `yaml:"detectors,omitempty"`
 }
 
@@ -152,9 +152,9 @@ func CreateContext(config Config) Context {
 	listeners := []Listener{ConsolePrinterListener{}}
 
 	return Context{
-		Readers: readers,
-		Detectors: detectors,
-		Listeners: listeners,
+		Readers:        readers,
+		Detectors:      detectors,
+		Listeners:      listeners,
 		PostRepository: NewPostRepository(),
 	}
 }
@@ -176,7 +176,7 @@ func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
 	return detectors
 }
 
-func waitForPosts(reader FeedReader, posts chan <- Post, count int) {
+func waitForPosts(reader FeedReader, posts chan<- Post, count int) {
 	log.Printf("listening on feed=%s\n", reader.GetFeed().Id)
 	for i := 0; i < count; i++ {
 		for _, post := range reader.FetchNewPosts() {
@@ -208,5 +208,5 @@ func ellipsize(s string, length int) string {
 	if len(s) < length {
 		return s
 	}
-	return s[0:length - 3] + "..."
+	return s[0:length-3] + "..."
 }

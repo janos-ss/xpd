@@ -1,9 +1,9 @@
 package xpd
 
 import (
-	"strings"
-	"regexp"
 	"math"
+	"regexp"
+	"strings"
 )
 
 type SameBodyDetector struct{}
@@ -12,7 +12,7 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
 		if post.Body == oldPost.Body {
-			duplicates = append(duplicates, oldPost);
+			duplicates = append(duplicates, oldPost)
 		}
 	}
 	return duplicates
@@ -31,7 +31,7 @@ func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Po
 	for _, oldPost := range oldPosts {
 		otherWordCounts, otherTotal := calcWordCounts(oldPost.Body)
 		if similarCounts(total, otherTotal, limitRatio) && similarWordCountMaps(wordCounts, otherWordCounts, limit) {
-			duplicates = append(duplicates, oldPost);
+			duplicates = append(duplicates, oldPost)
 		}
 	}
 	return duplicates
@@ -58,7 +58,7 @@ func splitToWords(text string) []string {
 
 func similarCounts(base, other int, limitRatio float64) bool {
 	interval := calcRatio(base, limitRatio)
-	return isWithinRange(other, base - interval, base + interval)
+	return isWithinRange(other, base-interval, base+interval)
 }
 
 func calcRatio(base int, ratio float64) int {
@@ -79,7 +79,7 @@ func calcWordCountDiffs(first, second wordCountMap) float64 {
 	for word, count := range first {
 		otherCount, ok := second[word]
 		if ok {
-			diffs += math.Abs(float64(count - otherCount)) / 2
+			diffs += math.Abs(float64(count-otherCount)) / 2
 		} else {
 			diffs += float64(count)
 		}

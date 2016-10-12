@@ -1,8 +1,8 @@
 package xpd
 
 import (
-	"log"
 	ct "github.com/daviddengcn/go-colortext"
+	"log"
 )
 
 type ConsolePrinterListener struct{}

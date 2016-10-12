@@ -1,11 +1,11 @@
 package xpd
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
-func Test_adding_to_repo(t*testing.T) {
+func Test_adding_to_repo(t *testing.T) {
 	var repo PostRepository = NewPostRepository()
 	repo.Add(Post{})
 
@@ -14,7 +14,7 @@ func Test_adding_to_repo(t*testing.T) {
 	}
 }
 
-func Test_SameBodyDetector_FindDuplicates_finds_same_body(t*testing.T) {
+func Test_SameBodyDetector_FindDuplicates_finds_same_body(t *testing.T) {
 	body := "some text"
 	differentBody := body + " blah"
 
@@ -25,33 +25,33 @@ func Test_SameBodyDetector_FindDuplicates_finds_same_body(t*testing.T) {
 	repo.Add(Post{Body: differentBody})
 
 	var detector Detector = SameBodyDetector{}
-	if ! reflect.DeepEqual(detector.FindDuplicates(post, []Post{post}), []Post{post}) {
+	if !reflect.DeepEqual(detector.FindDuplicates(post, []Post{post}), []Post{post}) {
 		t.Errorf("same-body-detector should find only the match")
 	}
 }
 
-func Test_ellipsize_someString_15_is_someString(t*testing.T) {
+func Test_ellipsize_someString_15_is_someString(t *testing.T) {
 	s := "someString"
 	if actual := ellipsize(s, 15); actual != s {
 		t.Fatalf("got %s; expected %s", actual, s)
 	}
 }
 
-func Test_ellipsize_someString_7_is_somedots(t*testing.T) {
+func Test_ellipsize_someString_7_is_somedots(t *testing.T) {
 	s := "someString"
 	if actual, expected := ellipsize(s, 7), "some..."; actual != expected {
 		t.Fatalf("got %s; expected %s", actual, expected)
 	}
 }
 
-func Test_splitToWords(t*testing.T) {
+func Test_splitToWords(t *testing.T) {
 	s := "   @#$@hello THERE 4324%%%$# ouch  "
 	if actual, expected := splitToWords(s), []string{"hello", "there", "ouch"}; !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("got %s; expected %s", actual, expected)
 	}
 }
 
-func Test_wordCounts(t*testing.T) {
+func Test_wordCounts(t *testing.T) {
 	s := "Hello World hello again"
 
 	expected := wordCountMap{
@@ -66,7 +66,7 @@ func Test_wordCounts(t*testing.T) {
 	}
 }
 
-func Test_similarEnoughCounts(t*testing.T) {
+func Test_similarEnoughCounts(t *testing.T) {
 	limitRatio := 0.1
 	base := 123
 	if other := base; !similarCounts(base, other, limitRatio) {
@@ -78,15 +78,15 @@ func Test_similarEnoughCounts(t*testing.T) {
 	if other := base - calcRatio(base, limitRatio); !similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
 	}
-	if other := base + calcRatio(base, 1.1 * limitRatio); similarCounts(base, other, limitRatio) {
+	if other := base + calcRatio(base, 1.1*limitRatio); similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
 	}
-	if other := base - calcRatio(base, 1.1 * limitRatio); similarCounts(base, other, limitRatio) {
+	if other := base - calcRatio(base, 1.1*limitRatio); similarCounts(base, other, limitRatio) {
 		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
 	}
 }
 
-func Test_wordCountDiffs(t*testing.T) {
+func Test_wordCountDiffs(t *testing.T) {
 	first := wordCountMap{
 		"hello": 7,
 		"world": 13,
@@ -94,12 +94,12 @@ func Test_wordCountDiffs(t*testing.T) {
 	}
 	second := wordCountMap{
 		"welcome": 23,
-		"new": 29,
-		"world": 31,
+		"new":     29,
+		"world":   31,
 	}
 
-	expectedDiffsLeft := float64(7 + 17) + float64(31 - 13) / 2
-	expectedDiffsRight := float64(23 + 29) + float64(31 - 13) / 2
+	expectedDiffsLeft := float64(7+17) + float64(31-13)/2
+	expectedDiffsRight := float64(23+29) + float64(31-13)/2
 
 	if actual := calcWordCountDiffs(first, second); actual != expectedDiffsLeft {
 		t.Errorf("got %f; expected %f", actual, expectedDiffsLeft)
@@ -110,7 +110,7 @@ func Test_wordCountDiffs(t*testing.T) {
 	}
 }
 
-func Test_SimilarWordCountDetector_with_rearranged_words(t*testing.T) {
+func Test_SimilarWordCountDetector_with_rearranged_words(t *testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog"}
 	rearranged := []Post{Post{Body: "the lazy dog The quick brown fox jumps over"}}
 
@@ -119,7 +119,7 @@ func Test_SimilarWordCountDetector_with_rearranged_words(t*testing.T) {
 	}
 }
 
-func Test_SimilarWordCountDetector_with_deleted_words(t*testing.T) {
+func Test_SimilarWordCountDetector_with_deleted_words(t *testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
 	deleted := []Post{Post{Body: "The quick brown fox over the lazy dog filler filler"}}
 
@@ -128,7 +128,7 @@ func Test_SimilarWordCountDetector_with_deleted_words(t*testing.T) {
 	}
 }
 
-func Test_SimilarWordCountDetector_with_added_words(t*testing.T) {
+func Test_SimilarWordCountDetector_with_added_words(t *testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
 	added := []Post{Post{Body: "The quick brown fox jumps over the dumb lazy dog filler filler"}}
 
@@ -137,7 +137,7 @@ func Test_SimilarWordCountDetector_with_added_words(t*testing.T) {
 	}
 }
 
-func Test_DefaultDetectorRegistry(t*testing.T) {
+func Test_DefaultDetectorRegistry(t *testing.T) {
 	detector := SimilarWordCountDetector{}
 
 	reg := NewDetectorRegistry()
@@ -152,7 +152,7 @@ func Test_DefaultDetectorRegistry(t*testing.T) {
 	})
 }
 
-func Test_getDetectors(t*testing.T) {
+func Test_getDetectors(t *testing.T) {
 	reg := NewDetectorRegistry()
 	reg.Register(SameBodyDetector{})
 	reg.Register(SimilarWordCountDetector{})
@@ -178,7 +178,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 	f()
 }
 
-func Test_CreateContext(t*testing.T) {
+func Test_CreateContext(t *testing.T) {
 	config := Config{
 		Feeds: []Feed{
 			Feed{Id: "dummy1", Url: "dummy1"},
@@ -210,7 +210,7 @@ func Test_CreateContext(t*testing.T) {
 	}
 }
 
-func Test_ReadConfig_valid_example(t*testing.T) {
+func Test_ReadConfig_valid_example(t *testing.T) {
 	config := ReadConfig("xpd.yml.example")
 
 	if len(config.Feeds) < 1 {
@@ -221,13 +221,13 @@ func Test_ReadConfig_valid_example(t*testing.T) {
 	}
 }
 
-func Test_ReadConfig_nonexistent_should_crash(t*testing.T) {
+func Test_ReadConfig_nonexistent_should_crash(t *testing.T) {
 	assertPanic(t, "did not crash on non-existent config file, but it should have", func() {
 		ReadConfig("nonexistent")
 	})
 }
 
-func Test_ReadConfig_malformed_should_crash(t*testing.T) {
+func Test_ReadConfig_malformed_should_crash(t *testing.T) {
 	assertPanic(t, "did not crash on malformed config file, but it should have", func() {
 		ReadConfig("xpd.go")
 	})
@@ -241,15 +241,15 @@ func (listener *mockListener) OnDuplicates(Post, []Post) {
 	listener.invoked = true
 }
 
-func Test_processPost(t*testing.T) {
+func Test_processPost(t *testing.T) {
 	post := Post{}
 
 	listener := &mockListener{}
 	repo := NewPostRepository()
 
 	context := Context{
-		Detectors: []Detector{SameBodyDetector{}},
-		Listeners: []Listener{listener},
+		Detectors:      []Detector{SameBodyDetector{}},
+		Listeners:      []Listener{listener},
 		PostRepository: repo,
 	}
 
@@ -282,7 +282,7 @@ func (reader *mockReader) FetchNewPosts() []Post {
 	return []Post{Post{}}
 }
 
-func Test_waitForPosts(t*testing.T) {
+func Test_waitForPosts(t *testing.T) {
 	post := Post{}
 
 	reader := &mockReader{post: post}
@@ -295,7 +295,7 @@ func Test_waitForPosts(t*testing.T) {
 	}
 }
 
-func Test_run(t*testing.T) {
+func Test_run(t *testing.T) {
 	post := Post{}
 
 	reader := &mockReader{post: post}
@@ -303,9 +303,9 @@ func Test_run(t*testing.T) {
 	repo := NewPostRepository()
 
 	context := Context{
-		Readers: []FeedReader{reader},
-		Detectors: []Detector{SameBodyDetector{}},
-		Listeners: []Listener{listener},
+		Readers:        []FeedReader{reader},
+		Detectors:      []Detector{SameBodyDetector{}},
+		Listeners:      []Listener{listener},
 		PostRepository: repo,
 	}
 

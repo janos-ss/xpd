@@ -1,13 +1,13 @@
 package xpd
 
 import (
-	rss "github.com/jteeuwen/go-pkg-rss"
-	ct "github.com/daviddengcn/go-colortext"
-	"os"
-	"io"
 	"errors"
-	"log"
 	"fmt"
+	ct "github.com/daviddengcn/go-colortext"
+	rss "github.com/jteeuwen/go-pkg-rss"
+	"io"
+	"log"
+	"os"
 )
 
 type rssReader struct {
@@ -40,12 +40,12 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	posts := make([]Post, len(newitems))
 	for i, item := range newitems {
 		post := Post{
-			Id: item.Id,
-			Url: item.Id,
-			Author: item.Author.Name,
+			Id:      item.Id,
+			Url:     item.Id,
+			Author:  item.Author.Name,
 			Subject: item.Title,
-			Body: item.Description,
-			Feed: &reader.feed,
+			Body:    item.Description,
+			Feed:    &reader.feed,
 		}
 		posts[i] = post
 	}
