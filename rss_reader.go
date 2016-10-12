@@ -37,8 +37,8 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	ct.ChangeColor(ct.Green, true, ct.None, false)
 	log.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
 
-	posts := make([]Post, 0)
-	for _, item := range newitems {
+	posts := make([]Post, len(newitems))
+	for i, item := range newitems {
 		post := Post{
 			Id: item.Id,
 			Url: item.Id,
@@ -47,7 +47,7 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 			Body: item.Description,
 			Feed: &reader.feed,
 		}
-		posts = append(posts, post)
+		posts[i] = post
 	}
 
 	reader.newPosts = posts

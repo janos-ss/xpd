@@ -160,18 +160,18 @@ func CreateContext(config Config) Context {
 }
 
 func getReaders(config Config) []FeedReader {
-	readers := make([]FeedReader, 0)
-	for _, feed := range config.Feeds {
+	readers := make([]FeedReader, len(config.Feeds))
+	for i, feed := range config.Feeds {
 		log.Printf("Creating reader for: %#v\n", feed.Id)
-		readers = append(readers, NewRssReader(feed.Url, feed))
+		readers[i] = NewRssReader(feed.Url, feed)
 	}
 	return readers
 }
 
 func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
-	detectors := make([]Detector, 0)
-	for _, name := range detectorNames {
-		detectors = append(detectors, reg.Get(name))
+	detectors := make([]Detector, len(detectorNames))
+	for i, name := range detectorNames {
+		detectors[i] = reg.Get(name)
 	}
 	return detectors
 }
