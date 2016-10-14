@@ -39,9 +39,10 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 
 	posts := make([]Post, len(newitems))
 	for i, item := range newitems {
+		id := extractPostId(item)
 		post := Post{
-			Id:      item.Id,
-			Url:     item.Id,
+			Id:      id,
+			Url:     id,
 			Author:  item.Author.Name,
 			Subject: item.Title,
 			Body:    item.Description,
@@ -51,6 +52,17 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	}
 
 	reader.newPosts = posts
+}
+
+// RSS feeds store the post id in different non-standard places
+func extractPostId(item *rss.Item) string {
+	if len(item.Id) > 0 {
+		return item.Id
+	}
+	for _, link := range item.Links {
+		return link.Href
+	}
+	return ""
 }
 
 func (reader *rssReader) GetFeed() Feed {
