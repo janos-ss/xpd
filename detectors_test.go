@@ -1,8 +1,8 @@
 package xpd
 
 import (
-	"testing"
 	"reflect"
+	"testing"
 )
 
 func Test_SameBodyDetector_FindDuplicates_finds_same_body(t *testing.T) {

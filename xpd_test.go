@@ -5,12 +5,22 @@ import (
 	"testing"
 )
 
-func Test_adding_to_repo(t *testing.T) {
-	var repo PostRepository = NewPostRepository()
-	repo.Add(Post{})
+func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T) {
+	post1 := Post{Id: "1"}
+	post2 := Post{Id: "2"}
 
-	if len(repo.FindRecent()) == 0 {
-		t.Fatal("PostRepository should not be empty after post added")
+	var repo PostRepository = &defaultPostRepository{capacity: 2}
+	repo.Add(post1)
+	repo.Add(post2)
+
+	if expected, actual := []Post{post1, post2}, repo.FindRecent(); !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("got %#v; expected %#v", actual, expected)
+	}
+
+	post3 := Post{Id: "3"}
+	repo.Add(post3)
+	if expected, actual := []Post{post2, post3}, repo.FindRecent(); !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("got %#v; expected %#v", actual, expected)
 	}
 }
 

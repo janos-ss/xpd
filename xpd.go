@@ -12,6 +12,8 @@ import (
 // poll RSS feeds once per 15 minutes
 const rss_polling_millis = 1000 * 60 * 15
 
+const defaultPostRepositoryCapacity = 10000
+
 type Post struct {
 	Id      string
 	Url     string
@@ -70,11 +72,12 @@ type PostRepository interface {
 }
 
 type defaultPostRepository struct {
-	posts []Post
+	posts    []Post
+	capacity int
 }
 
 func NewPostRepository() PostRepository {
-	return &defaultPostRepository{}
+	return &defaultPostRepository{capacity: defaultPostRepositoryCapacity}
 }
 
 func (repo defaultPostRepository) FindRecent() []Post {
@@ -82,7 +85,13 @@ func (repo defaultPostRepository) FindRecent() []Post {
 }
 
 func (repo *defaultPostRepository) Add(post Post) {
-	repo.posts = append(repo.posts, post)
+	var posts []Post
+	if len(repo.posts) < repo.capacity {
+		posts = repo.posts
+	} else {
+		posts = repo.posts[1:]
+	}
+	repo.posts = append(posts, post)
 }
 
 type Context struct {
