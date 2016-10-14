@@ -89,7 +89,7 @@ func Test_wordCountDiffs(t *testing.T) {
 
 func Test_SimilarWordCountDetector_with_rearranged_words(t *testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog"}
-	rearranged := []Post{Post{Body: "the lazy dog The quick brown fox jumps over"}}
+	rearranged := []Post{{Body: "the lazy dog The quick brown fox jumps over"}}
 
 	if !reflect.DeepEqual(SimilarWordCountDetector{}.FindDuplicates(post, rearranged), rearranged) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", rearranged[0].Body, post.Body)
@@ -98,7 +98,7 @@ func Test_SimilarWordCountDetector_with_rearranged_words(t *testing.T) {
 
 func Test_SimilarWordCountDetector_with_deleted_words(t *testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
-	deleted := []Post{Post{Body: "The quick brown fox over the lazy dog filler filler"}}
+	deleted := []Post{{Body: "The quick brown fox over the lazy dog filler filler"}}
 
 	if !reflect.DeepEqual(SimilarWordCountDetector{}.FindDuplicates(post, deleted), deleted) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", deleted[0].Body, post.Body)
@@ -107,7 +107,7 @@ func Test_SimilarWordCountDetector_with_deleted_words(t *testing.T) {
 
 func Test_SimilarWordCountDetector_with_added_words(t *testing.T) {
 	post := Post{Body: "The quick brown fox jumps over the lazy dog filler filler"}
-	added := []Post{Post{Body: "The quick brown fox jumps over the dumb lazy dog filler filler"}}
+	added := []Post{{Body: "The quick brown fox jumps over the dumb lazy dog filler filler"}}
 
 	if !reflect.DeepEqual(SimilarWordCountDetector{}.FindDuplicates(post, added), added) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", added[0].Body, post.Body)

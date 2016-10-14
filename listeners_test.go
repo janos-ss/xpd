@@ -5,7 +5,7 @@ import "testing"
 func Test_consolePrinterListener_should_crash_on_Post_without_Feed(t *testing.T) {
 	postWithoutFeed := Post{Subject: "dummyPost"}
 	assertPanic(t, "did not crash on Post without Feed, but it should have", func() {
-		ConsolePrinterListener{}.OnDuplicates(postWithoutFeed, []Post{Post{}})
+		ConsolePrinterListener{}.OnDuplicates(postWithoutFeed, []Post{{}})
 	})
 }
 

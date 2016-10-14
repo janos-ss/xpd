@@ -58,8 +58,8 @@ func assertPanic(t *testing.T, message string, f func()) {
 func Test_CreateContext(t *testing.T) {
 	config := Config{
 		Feeds: []Feed{
-			Feed{Id: "dummy1", Url: "dummy1"},
-			Feed{Id: "dummy2", Url: "dummy2"},
+			{Id: "dummy1", Url: "dummy1"},
+			{Id: "dummy2", Url: "dummy2"},
 		},
 		DetectorNames: []string{"SameBodyDetector"},
 	}
@@ -156,7 +156,7 @@ func (reader *mockReader) GetFeed() Feed {
 }
 
 func (reader *mockReader) FetchNewPosts() []Post {
-	return []Post{Post{}}
+	return []Post{{}}
 }
 
 func Test_waitForPosts(t *testing.T) {
