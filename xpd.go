@@ -105,7 +105,7 @@ const maxUint = ^uint(0)
 const MaxInt = int(maxUint >> 1)
 
 func RunForever(configfile string) {
-	context := CreateContext(ReadConfig(configfile))
+	context := NewContext(ReadConfig(configfile))
 	count := MaxInt / len(context.Readers)
 	run(context, count)
 }
@@ -149,7 +149,7 @@ func ReadConfig(configfile string) Config {
 	return config
 }
 
-func CreateContext(config Config) Context {
+func NewContext(config Config) Context {
 	readers := getReaders(config)
 
 	detectorRegistry := NewDetectorRegistry()

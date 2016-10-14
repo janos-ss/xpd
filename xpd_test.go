@@ -24,7 +24,7 @@ func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T
 	}
 }
 
-func Test_DefaultDetectorRegistry(t *testing.T) {
+func Test_defaultDetectorRegistry(t *testing.T) {
 	detector := SimilarWordCountDetector{}
 
 	reg := NewDetectorRegistry()
@@ -65,7 +65,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 	f()
 }
 
-func Test_CreateContext(t *testing.T) {
+func Test_NewContext(t *testing.T) {
 	config := Config{
 		Feeds: []Feed{
 			{Id: "dummy1", Url: "dummy1"},
@@ -73,7 +73,7 @@ func Test_CreateContext(t *testing.T) {
 		},
 		DetectorNames: []string{"SameBodyDetector"},
 	}
-	context := CreateContext(config)
+	context := NewContext(config)
 
 	if len(context.Readers) != len(config.Feeds) {
 		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.Readers, config.Feeds)
