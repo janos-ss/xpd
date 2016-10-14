@@ -10,7 +10,7 @@ import (
 )
 
 // poll RSS feeds once per 15 minutes
-const rss_polling_millis = 1000 * 60 * 15
+const rssPollingMillis = 1000 * 60 * 15
 
 const defaultPostRepositoryCapacity = 10000
 
@@ -191,7 +191,7 @@ func waitForPosts(reader FeedReader, posts chan<- Post, count int) {
 		for _, post := range reader.FetchNewPosts() {
 			posts <- post
 		}
-		time.Sleep(rss_polling_millis * time.Millisecond)
+		time.Sleep(rssPollingMillis * time.Millisecond)
 	}
 }
 
