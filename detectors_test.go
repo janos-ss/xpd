@@ -17,7 +17,7 @@ func Test_SameBodyDetector_FindDuplicates_finds_same_body(t *testing.T) {
 
 	var detector Detector = SameBodyDetector{}
 	if !reflect.DeepEqual(detector.FindDuplicates(post, []Post{post}), []Post{post}) {
-		t.Errorf("same-body-detector should find only the match")
+		t.Fatal("same-body-detector should find only the match")
 	}
 }
 

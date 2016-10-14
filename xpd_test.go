@@ -10,7 +10,7 @@ func Test_adding_to_repo(t *testing.T) {
 	repo.Add(Post{})
 
 	if len(repo.FindRecent()) == 0 {
-		t.Errorf("PostRepository should not be empty after post added")
+		t.Fatal("PostRepository should not be empty after post added")
 	}
 }
 
