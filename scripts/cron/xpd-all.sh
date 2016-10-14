@@ -7,11 +7,16 @@
 cd "$(dirname "$0")"
 . ./common.sh
 
+test -x xpd || fatal "missing or not executable $PWD/xpd"
+
+names=$(names)
+test "$names" || fatal "missing configurations in $PWD/conf/*.yml"
+
 match_session() {
     ./list.sh | grep -F .xpd-$1
 }
 
-for name in $(names); do
+for name in $names; do
     config=conf/$name.yml
 
     # stop running session, unless it matches "Attached" or "Detached"
