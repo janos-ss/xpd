@@ -25,7 +25,7 @@ type wordCountMap struct {
 	total  int
 }
 
-func createWordCountMap(text string) *wordCountMap {
+func newWordCountMap(text string) *wordCountMap {
 	counts := make(map[string]int)
 	total := 0
 	for _, word := range splitToWords(text) {
@@ -39,13 +39,13 @@ func createWordCountMap(text string) *wordCountMap {
 }
 
 func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
-	wordCounts := createWordCountMap(post.Body)
+	wordCounts := newWordCountMap(post.Body)
 	limitRatio := 0.1
 	limit := float64(wordCounts.total) * limitRatio
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
-		otherWordCounts := createWordCountMap(oldPost.Body)
+		otherWordCounts := newWordCountMap(oldPost.Body)
 		if similarCounts(wordCounts.total, otherWordCounts.total, limitRatio) && similarWordCountMaps(wordCounts, otherWordCounts, limit) {
 			duplicates = append(duplicates, oldPost)
 		}

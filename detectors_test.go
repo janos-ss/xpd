@@ -40,7 +40,7 @@ func Test_wordCounts(t *testing.T) {
 		total: 4,
 	}
 
-	if actual := createWordCountMap(s); !reflect.DeepEqual(actual, expected) {
+	if actual := newWordCountMap(s); !reflect.DeepEqual(actual, expected) {
 		t.Fatalf("got %#v; expected %#v", actual, expected)
 	}
 }
