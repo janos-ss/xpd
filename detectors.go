@@ -39,18 +39,22 @@ func newWordCountMap(text string) *wordCountMap {
 }
 
 func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
-	wordCounts := newWordCountMap(post.Body)
+	wcmap := newWordCountMap(post.Body)
 	limitRatio := 0.1
-	limit := float64(wordCounts.total) * limitRatio
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
-		otherWordCounts := newWordCountMap(oldPost.Body)
-		if similarCounts(wordCounts.total, otherWordCounts.total, limitRatio) && similarWordCountMaps(wordCounts, otherWordCounts, limit) {
+		otherWordCountMap := newWordCountMap(oldPost.Body)
+		if wcmap.isSimilar(otherWordCountMap, limitRatio) {
 			duplicates = append(duplicates, oldPost)
 		}
 	}
 	return duplicates
+}
+
+func (wcmap *wordCountMap) isSimilar(other *wordCountMap, limitRatio float64) bool {
+	limit := float64(wcmap.total) * limitRatio
+	return similarCounts(wcmap.total, other.total, limitRatio) && similarWordCountMaps(wcmap, other, limit)
 }
 
 func splitToWords(text string) []string {
