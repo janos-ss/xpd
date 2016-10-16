@@ -20,34 +20,37 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 
 type SimilarWordCountDetector struct{}
 
-type wordCountMap map[string]int
+type wordCountMap struct {
+	counts map[string]int
+	total  int
+}
+
+func createWordCountMap(text string) *wordCountMap {
+	counts := make(map[string]int)
+	total := 0
+	for _, word := range splitToWords(text) {
+		if _, ok := counts[word]; !ok {
+			counts[word] = 0
+		}
+		counts[word]++
+		total++
+	}
+	return &wordCountMap{counts, total}
+}
 
 func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
-	wordCounts, total := calcWordCounts(post.Body)
+	wordCounts := createWordCountMap(post.Body)
 	limitRatio := 0.1
-	limit := float64(total) * limitRatio
+	limit := float64(wordCounts.total) * limitRatio
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
-		otherWordCounts, otherTotal := calcWordCounts(oldPost.Body)
-		if similarCounts(total, otherTotal, limitRatio) && similarWordCountMaps(wordCounts, otherWordCounts, limit) {
+		otherWordCounts := createWordCountMap(oldPost.Body)
+		if similarCounts(wordCounts.total, otherWordCounts.total, limitRatio) && similarWordCountMaps(wordCounts, otherWordCounts, limit) {
 			duplicates = append(duplicates, oldPost)
 		}
 	}
 	return duplicates
-}
-
-func calcWordCounts(text string) (wordCountMap, int) {
-	wordCounts := make(wordCountMap)
-	total := 0
-	for _, word := range splitToWords(text) {
-		if _, ok := wordCounts[word]; !ok {
-			wordCounts[word] = 0
-		}
-		wordCounts[word]++
-		total++
-	}
-	return wordCounts, total
 }
 
 func splitToWords(text string) []string {
@@ -69,15 +72,15 @@ func isWithinRange(target, start, end int) bool {
 	return start <= target && target <= end
 }
 
-func similarWordCountMaps(first, second wordCountMap, limit float64) bool {
+func similarWordCountMaps(first, second *wordCountMap, limit float64) bool {
 	diffs := calcWordCountDiffs(first, second) + calcWordCountDiffs(second, first)
 	return diffs < limit
 }
 
-func calcWordCountDiffs(first, second wordCountMap) float64 {
+func calcWordCountDiffs(first, second *wordCountMap) float64 {
 	var diffs float64 = 0
-	for word, count := range first {
-		otherCount, ok := second[word]
+	for word, count := range first.counts {
+		otherCount, ok := second.counts[word]
 		if ok {
 			diffs += math.Abs(float64(count-otherCount)) / 2
 		} else {

@@ -1,8 +1,8 @@
 package xpd
 
 import (
-	"testing"
 	rss "github.com/jteeuwen/go-pkg-rss"
+	"testing"
 )
 
 func newDummyItem() *rss.Item {
@@ -11,7 +11,7 @@ func newDummyItem() *rss.Item {
 	return &rss.Item{Links: []*rss.Link{&link1, &link2}}
 }
 
-func Test_extractPostId_should_return_id_if_exists(t*testing.T) {
+func Test_extractPostId_should_return_id_if_exists(t *testing.T) {
 	id := "dummyId"
 	item := newDummyItem()
 	item.Id = id
@@ -20,7 +20,7 @@ func Test_extractPostId_should_return_id_if_exists(t*testing.T) {
 	}
 }
 
-func Test_extractPostId_should_return_first_link_if_exists_and_id_missing(t*testing.T) {
+func Test_extractPostId_should_return_first_link_if_exists_and_id_missing(t *testing.T) {
 	id := "dummyId"
 	item := newDummyItem()
 	item.Links[0].Href = id
@@ -29,7 +29,7 @@ func Test_extractPostId_should_return_first_link_if_exists_and_id_missing(t*test
 	}
 }
 
-func Test_extractPostId_should_return_empty_string_when_no_id_no_link(t*testing.T) {
+func Test_extractPostId_should_return_empty_string_when_no_id_no_link(t *testing.T) {
 	id := ""
 	item := newDummyItem()
 	if actual := extractPostId(item); actual != id {

@@ -31,15 +31,17 @@ func Test_splitToWords(t *testing.T) {
 func Test_wordCounts(t *testing.T) {
 	s := "Hello World hello again"
 
-	expected := wordCountMap{
-		"hello": 2,
-		"world": 1,
-		"again": 1,
+	expected := &wordCountMap{
+		counts: map[string]int{
+			"hello": 2,
+			"world": 1,
+			"again": 1,
+		},
+		total: 4,
 	}
-	expectedTotal := 4
 
-	if actual, actualTotal := calcWordCounts(s); !reflect.DeepEqual(actual, expected) || actualTotal != expectedTotal {
-		t.Fatalf("got %v, %d; expected %v, %d", actual, actualTotal, expected, expectedTotal)
+	if actual := createWordCountMap(s); !reflect.DeepEqual(actual, expected) {
+		t.Fatalf("got %#v; expected %#v", actual, expected)
 	}
 }
 
@@ -64,15 +66,21 @@ func Test_similarEnoughCounts(t *testing.T) {
 }
 
 func Test_wordCountDiffs(t *testing.T) {
-	first := wordCountMap{
-		"hello": 7,
-		"world": 13,
-		"again": 17,
+	first := &wordCountMap{
+		counts: map[string]int{
+			"hello": 7,
+			"world": 13,
+			"again": 17,
+		},
+		total: 7 + 13 + 17,
 	}
-	second := wordCountMap{
-		"welcome": 23,
-		"new":     29,
-		"world":   31,
+	second := &wordCountMap{
+		counts: map[string]int{
+			"welcome": 23,
+			"new":     29,
+			"world":   31,
+		},
+		total: 23 + 29 + 31,
 	}
 
 	expectedDiffsLeft := float64(7+17) + float64(31-13)/2
