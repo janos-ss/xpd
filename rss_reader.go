@@ -60,7 +60,9 @@ func extractPostId(item *rss.Item) string {
 		return item.Id
 	}
 	for _, link := range item.Links {
-		return link.Href
+		if len(link.Href) > 0 {
+			return link.Href
+		}
 	}
 	return ""
 }
