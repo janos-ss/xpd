@@ -4,4 +4,7 @@
 # Purpose: show all running xpd screen sessions
 #
 
-screen -ls | grep -F .xpd-
+cd "$(dirname "$0")"
+. ./common.sh
+
+screen -ls | grep -F .$prefix-

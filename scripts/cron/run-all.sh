@@ -13,7 +13,7 @@ names=$(names)
 test "$names" || fatal "missing configurations in $PWD/conf/*.yml"
 
 match_session() {
-    ./list.sh | grep -F .xpd-$1
+    ./list.sh | grep -F .$prefix-$1
 }
 
 for name in $names; do
@@ -26,7 +26,7 @@ for name in $names; do
 
     if ! match_session $name >/dev/null; then
         echo \* starting $name ...
-        screen -d -m -S xpd-$name ./run-single.sh $name
+        screen -d -m -S $prefix-$name ./run-single.sh $name
         echo \* done.
     fi
 done

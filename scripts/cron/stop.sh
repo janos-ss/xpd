@@ -11,6 +11,6 @@ test $# = 0 && set -- $(names)
 
 for name; do
     info stopping $name ...
-    screen -S xpd-$name -wipe >/dev/null || :
-    screen -S xpd-$name -p 0 -X stuff 
+    screen -S $prefix-$name -wipe >/dev/null || :
+    screen -S $prefix-$name -p 0 -X stuff
 done

@@ -4,6 +4,8 @@
 # Purpose: common functions
 #
 
+prefix=xpd
+
 info() {
     echo '[info]' $@
 }
