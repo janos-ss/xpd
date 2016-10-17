@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # 
-# File: xpd-single.sh
+# File: run-single.sh
 # Purpose: run xpd for named config
 #
 

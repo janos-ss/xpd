@@ -1,6 +1,6 @@
 #!/bin/sh -e
 # 
-# File: xpd-all.sh
+# File: run-all.sh
 # Purpose: run xpd for each configuration, if not already running
 #
 
@@ -26,7 +26,7 @@ for name in $names; do
 
     if ! match_session $name >/dev/null; then
         echo \* starting $name ...
-        screen -d -m -S xpd-$name ./xpd-single.sh $name
+        screen -d -m -S xpd-$name ./run-single.sh $name
         echo \* done.
     fi
 done
