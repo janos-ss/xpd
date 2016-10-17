@@ -63,7 +63,7 @@ func Test_wordCountDiffs(t *testing.T) {
 		total: 23 + 29 + 31,
 	}
 
-	expectedDiffs := 7 + (31-13) + 17 + 23 + 29
+	expectedDiffs := 7 + (31 - 13) + 17 + 23 + 29
 
 	if actual := calcWordCountDiffs(first, second); actual != expectedDiffs {
 		t.Errorf("got %f; expected %f", actual, expectedDiffs)

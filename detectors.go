@@ -68,7 +68,7 @@ func calcWordCountDiffs(first, second *wordCountMap) int {
 	for word, count := range first.counts {
 		otherCount, ok := second.counts[word]
 		if ok {
-			diffs += abs(count-otherCount)
+			diffs += abs(count - otherCount)
 		} else {
 			diffs += count
 		}
