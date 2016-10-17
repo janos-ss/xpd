@@ -53,7 +53,7 @@ func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Po
 
 func (wcmap *wordCountMap) isSimilar(other *wordCountMap, limitRatio float64) bool {
 	limit := float64(wcmap.total) * limitRatio
-	return similarCounts(wcmap.total, other.total, limitRatio) && similarWordCountMaps(wcmap, other, limit)
+	return similarCounts(wcmap.total, other.total, limitRatio) && float64(calcWordCountDiffs(wcmap, other)) < limit
 }
 
 func splitToWords(text string) []string {
@@ -73,10 +73,6 @@ func calcRatio(base int, ratio float64) int {
 
 func isWithinRange(target, start, end int) bool {
 	return start <= target && target <= end
-}
-
-func similarWordCountMaps(first, second *wordCountMap, limit float64) bool {
-	return float64(calcWordCountDiffs(first, second)) < limit
 }
 
 func calcWordCountDiffs(first, second *wordCountMap) int {
