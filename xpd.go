@@ -154,7 +154,7 @@ func NewContext(config Config) Context {
 
 	detectorRegistry := NewDetectorRegistry()
 	detectorRegistry.Register(SameBodyDetector{})
-	detectorRegistry.Register(SimilarWordCountDetector{})
+	detectorRegistry.Register(SimilarWordCountDetector{0.2})
 
 	detectors := getDetectors(detectorRegistry, config.DetectorNames)
 
