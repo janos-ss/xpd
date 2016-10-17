@@ -39,6 +39,11 @@ func newWordCountMap(text string) *wordCountMap {
 	return &wordCountMap{counts, total}
 }
 
+func splitToWords(text string) []string {
+	abc := strings.TrimSpace(nonLetters.ReplaceAllString(strings.ToLower(text), " "))
+	return strings.Split(abc, " ")
+}
+
 func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
 	wcmap := newWordCountMap(post.Body)
 	limitRatio := 0.1
@@ -56,11 +61,6 @@ func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Po
 func (wcmap *wordCountMap) isSimilar(other *wordCountMap, limitRatio float64) bool {
 	limit := float64(wcmap.total) * limitRatio
 	return float64(abs(wcmap.total-other.total)) < limit && float64(calcWordCountDiffs(wcmap, other)) < limit
-}
-
-func splitToWords(text string) []string {
-	abc := strings.TrimSpace(nonLetters.ReplaceAllString(strings.ToLower(text), " "))
-	return strings.Split(abc, " ")
 }
 
 func calcWordCountDiffs(first, second *wordCountMap) int {
