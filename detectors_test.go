@@ -45,26 +45,6 @@ func Test_wordCounts(t *testing.T) {
 	}
 }
 
-func Test_similarEnoughCounts(t *testing.T) {
-	limitRatio := 0.1
-	base := 123
-	if other := base; !similarCounts(base, other, limitRatio) {
-		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
-	}
-	if other := base + calcRatio(base, limitRatio); !similarCounts(base, other, limitRatio) {
-		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
-	}
-	if other := base - calcRatio(base, limitRatio); !similarCounts(base, other, limitRatio) {
-		t.Errorf("got %d and %d are _not_ similar enough, but should be", base, other)
-	}
-	if other := base + calcRatio(base, 1.1*limitRatio); similarCounts(base, other, limitRatio) {
-		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
-	}
-	if other := base - calcRatio(base, 1.1*limitRatio); similarCounts(base, other, limitRatio) {
-		t.Errorf("got %d and %d are similar enough, but should _not_ be", base, other)
-	}
-}
-
 func Test_wordCountDiffs(t *testing.T) {
 	first := &wordCountMap{
 		counts: map[string]int{
