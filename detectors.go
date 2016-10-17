@@ -1,7 +1,6 @@
 package xpd
 
 import (
-	"math"
 	"regexp"
 	"strings"
 )
@@ -77,19 +76,31 @@ func isWithinRange(target, start, end int) bool {
 }
 
 func similarWordCountMaps(first, second *wordCountMap, limit float64) bool {
-	diffs := calcWordCountDiffs(first, second) + calcWordCountDiffs(second, first)
-	return diffs < limit
+	return float64(calcWordCountDiffs(first, second)) < limit
 }
 
-func calcWordCountDiffs(first, second *wordCountMap) float64 {
-	var diffs float64 = 0
+func calcWordCountDiffs(first, second *wordCountMap) int {
+	diffs := 0
 	for word, count := range first.counts {
 		otherCount, ok := second.counts[word]
 		if ok {
-			diffs += math.Abs(float64(count-otherCount)) / 2
+			diffs += abs(count-otherCount)
 		} else {
-			diffs += float64(count)
+			diffs += count
+		}
+	}
+	for word, count := range second.counts {
+		_, ok := first.counts[word]
+		if !ok {
+			diffs += count
 		}
 	}
 	return diffs
+}
+
+func abs(num int) int {
+	if num < 0 {
+		return -num
+	}
+	return num
 }
