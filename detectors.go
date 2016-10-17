@@ -19,6 +19,8 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 
 type SimilarWordCountDetector struct{}
 
+var nonLetters = regexp.MustCompile("[^a-z]+")
+
 type wordCountMap struct {
 	counts map[string]int
 	total  int
@@ -57,8 +59,7 @@ func (wcmap *wordCountMap) isSimilar(other *wordCountMap, limitRatio float64) bo
 }
 
 func splitToWords(text string) []string {
-	r := regexp.MustCompile("[^a-z]+")
-	abc := strings.TrimSpace(r.ReplaceAllString(strings.ToLower(text), " "))
+	abc := strings.TrimSpace(nonLetters.ReplaceAllString(strings.ToLower(text), " "))
 	return strings.Split(abc, " ")
 }
 
