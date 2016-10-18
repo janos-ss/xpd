@@ -17,15 +17,17 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 	return duplicates
 }
 
+type wordCountCache map[string]wordCountMap
+
 type SimilarWordCountDetector struct {
 	maxDiffRatio float64
-	indexMap     map[string]wordCountMap
+	indexMap     wordCountCache
 }
 
 func NewSimilarWordCountDetector(maxDiffRatio float64) *SimilarWordCountDetector {
 	detector := SimilarWordCountDetector{
 		maxDiffRatio: maxDiffRatio,
-		indexMap: make(map[string]wordCountMap),
+		indexMap: make(wordCountCache),
 	}
 	return &detector
 }
