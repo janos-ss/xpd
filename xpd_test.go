@@ -61,7 +61,7 @@ func Test_getDetectors(t *testing.T) {
 func assertPanic(t *testing.T, message string, f func()) {
 	defer func() {
 		if r := recover(); r == nil {
-			t.Errorf(message)
+			t.Fatalf(message)
 		}
 	}()
 	f()
