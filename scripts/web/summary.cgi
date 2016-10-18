@@ -18,7 +18,14 @@ cat << EOF
 
 EOF
 
-for file in logs/*; do
+if [[ "$QUERY_STRING" =~ ^[a-z.]+$ ]]; then
+    pattern="$QUERY_STRING"
+else
+    pattern=.
+fi
+
+for file in $(ls logs | grep $pattern); do
+    file=logs/$file
     printf '<h3><a href="%s">%s</a></h3>' "$file" "$file"
 
     echo Cross posts:
