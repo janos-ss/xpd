@@ -14,4 +14,4 @@ config=conf/$name.yml
 
 mkdir -p logs
 
-./xpd -config $config 2>&1 | tee logs/$name.log
+./xpd -config $config 2>&1 | tee -a logs/$name.log
