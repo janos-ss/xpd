@@ -17,7 +17,7 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 	return duplicates
 }
 
-type wordCountCache map[string]wordCountMap
+type wordCountCache map[string]*wordCountMap
 
 type SimilarWordCountDetector struct {
 	maxDiffRatio float64
@@ -27,7 +27,7 @@ type SimilarWordCountDetector struct {
 func NewSimilarWordCountDetector(maxDiffRatio float64) *SimilarWordCountDetector {
 	detector := SimilarWordCountDetector{
 		maxDiffRatio: maxDiffRatio,
-		indexMap: make(wordCountCache),
+		indexMap:     make(wordCountCache),
 	}
 	return &detector
 }
@@ -57,12 +57,21 @@ func splitToWords(text string) []string {
 	return strings.Split(abc, " ")
 }
 
-func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
+func (detector *SimilarWordCountDetector) getWordCountMap(post Post) *wordCountMap {
+	if wcmap, ok := detector.indexMap[post.Id]; ok {
+		return wcmap
+	}
 	wcmap := newWordCountMap(post.Body)
+	detector.indexMap[post.Id] = wcmap
+	return wcmap
+}
+
+func (detector *SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
+	wcmap := detector.getWordCountMap(post)
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
-		otherWordCountMap := newWordCountMap(oldPost.Body)
+		otherWordCountMap := detector.getWordCountMap(oldPost)
 		if wcmap.isSimilar(otherWordCountMap, detector.maxDiffRatio) {
 			duplicates = append(duplicates, oldPost)
 		}

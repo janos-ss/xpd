@@ -40,12 +40,14 @@ func Test_defaultDetectorRegistry(t *testing.T) {
 }
 
 func Test_getDetectors(t *testing.T) {
+	expected := []Detector{SameBodyDetector{}, &SimilarWordCountDetector{}}
+
 	reg := NewDetectorRegistry()
-	reg.Register(SameBodyDetector{})
-	reg.Register(SimilarWordCountDetector{})
+	for _, detector := range expected {
+		reg.Register(detector)
+	}
 
 	detectors := getDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector"})
-	expected := []Detector{SameBodyDetector{}, SimilarWordCountDetector{}}
 
 	if !reflect.DeepEqual(detectors, expected) {
 		t.Errorf("got %#v, expected %#v", detectors, expected)

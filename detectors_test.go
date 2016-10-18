@@ -99,3 +99,22 @@ func Test_SimilarWordCountDetector_with_added_words(t *testing.T) {
 		t.Errorf("got '%v' not a duplicate of '%v', but it should be", added[0].Body, post.Body)
 	}
 }
+
+func Test_SimilarWordCountDetector_index_growth(t *testing.T) {
+	detector := NewSimilarWordCountDetector(0.1)
+
+	detector.FindDuplicates(Post{Id: "1"}, []Post{})
+	if actual := len(detector.indexMap); actual != 1 {
+		t.Fatalf("got %d items in index cache; expected %d", actual, 1)
+	}
+
+	detector.FindDuplicates(Post{Id: "2"}, []Post{})
+	if actual := len(detector.indexMap); actual != 2 {
+		t.Fatalf("got %d items in index cache; expected %d", actual, 2)
+	}
+
+	detector.FindDuplicates(Post{Id: "2"}, []Post{})
+	if actual := len(detector.indexMap); actual != 2 {
+		t.Fatalf("got %d items in index cache; expected %d (unchanged)", actual, 2)
+	}
+}
