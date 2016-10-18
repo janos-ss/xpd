@@ -17,8 +17,17 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 	return duplicates
 }
 
-type SimilarWordCountDetector struct{
-	MaxDiffRatio float64
+type SimilarWordCountDetector struct {
+	maxDiffRatio float64
+	indexMap     map[string]wordCountMap
+}
+
+func NewSimilarWordCountDetector(maxDiffRatio float64) *SimilarWordCountDetector {
+	detector := SimilarWordCountDetector{
+		maxDiffRatio: maxDiffRatio,
+		indexMap: make(map[string]wordCountMap),
+	}
+	return &detector
 }
 
 var nonLetters = regexp.MustCompile("[^a-z]+")
@@ -52,7 +61,7 @@ func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Po
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
 		otherWordCountMap := newWordCountMap(oldPost.Body)
-		if wcmap.isSimilar(otherWordCountMap, detector.MaxDiffRatio) {
+		if wcmap.isSimilar(otherWordCountMap, detector.maxDiffRatio) {
 			duplicates = append(duplicates, oldPost)
 		}
 	}

@@ -25,12 +25,12 @@ func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T
 }
 
 func Test_defaultDetectorRegistry(t *testing.T) {
-	detector := SimilarWordCountDetector{}
+	detector := NewSimilarWordCountDetector(0.1)
 
 	reg := NewDetectorRegistry()
 	reg.Register(detector)
 
-	if d := reg.Get("SimilarWordCountDetector"); d != detector {
+	if d := reg.Get("xpd.SimilarWordCountDetector"); !reflect.DeepEqual(d, detector) {
 		t.Errorf("got %#v, expected %#v", d, detector)
 	}
 
@@ -44,7 +44,7 @@ func Test_getDetectors(t *testing.T) {
 	reg.Register(SameBodyDetector{})
 	reg.Register(SimilarWordCountDetector{})
 
-	detectors := getDetectors(reg, []string{"SameBodyDetector", "SimilarWordCountDetector"})
+	detectors := getDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector"})
 	expected := []Detector{SameBodyDetector{}, SimilarWordCountDetector{}}
 
 	if !reflect.DeepEqual(detectors, expected) {
@@ -71,7 +71,7 @@ func Test_NewContext(t *testing.T) {
 			{Id: "dummy1", Url: "dummy1"},
 			{Id: "dummy2", Url: "dummy2"},
 		},
-		DetectorNames: []string{"SameBodyDetector"},
+		DetectorNames: []string{"xpd.SameBodyDetector"},
 	}
 	context := NewContext(config)
 

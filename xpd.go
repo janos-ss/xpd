@@ -51,7 +51,10 @@ func NewDetectorRegistry() DetectorRegistry {
 }
 
 func (reg defaultDetectorRegistry) Register(detector Detector) {
-	name := reflect.TypeOf(detector).Name()
+	name := reflect.TypeOf(detector).String()
+	if reflect.TypeOf(detector).Kind() == reflect.Ptr {
+		name = name[1:]
+	}
 	reg.detectors[name] = detector
 }
 
@@ -154,7 +157,7 @@ func NewContext(config Config) Context {
 
 	detectorRegistry := NewDetectorRegistry()
 	detectorRegistry.Register(SameBodyDetector{})
-	detectorRegistry.Register(SimilarWordCountDetector{0.2})
+	detectorRegistry.Register(NewSimilarWordCountDetector(0.2))
 
 	detectors := getDetectors(detectorRegistry, config.DetectorNames)
 
