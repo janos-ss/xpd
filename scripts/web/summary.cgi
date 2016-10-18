@@ -28,12 +28,12 @@ for file in $(ls logs | grep $pattern); do
     file=logs/$file
     printf '<h3><a href="%s">%s</a></h3>' "$file" "$file"
 
-    echo Cross posts:
-    echo '<pre>'
-    tail -n 1000 "$file" | sed -ne '/possible cross-post/,/----/p' | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
-    echo '</pre>'
+    if tail -n 1000 "$file" | grep -qF 'possible cross-post'; then
+        echo '<pre>'
+        tail -n 1000 "$file" | sed -ne '/possible cross-post/,/----/p' | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
+        echo '</pre>'
+    fi
 
-    echo tail:
     echo '<pre>'
     tail "$file" | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
     echo '</pre>'
