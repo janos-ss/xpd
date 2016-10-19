@@ -27,6 +27,5 @@ for name in $names; do
     if ! match_session $name >/dev/null; then
         echo \* starting $name ...
         screen -d -m -S $prefix-$name ./single.sh $name
-        echo \* done.
     fi
 done
