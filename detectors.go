@@ -17,19 +17,18 @@ func (detector SameBodyDetector) FindDuplicates(post Post, oldPosts []Post) []Po
 	return duplicates
 }
 
-type wordCountCache map[string]*wordCountMap
+type wordCountCache map[string]wordCountMap
 
 type SimilarWordCountDetector struct {
 	maxDiffRatio float64
 	indexMap     wordCountCache
 }
 
-func NewSimilarWordCountDetector(maxDiffRatio float64) *SimilarWordCountDetector {
-	detector := SimilarWordCountDetector{
+func NewSimilarWordCountDetector(maxDiffRatio float64) SimilarWordCountDetector {
+	return SimilarWordCountDetector{
 		maxDiffRatio: maxDiffRatio,
 		indexMap:     make(wordCountCache),
 	}
-	return &detector
 }
 
 var nonLetters = regexp.MustCompile("[^a-z]+")
@@ -39,7 +38,7 @@ type wordCountMap struct {
 	total  int
 }
 
-func newWordCountMap(text string) *wordCountMap {
+func newWordCountMap(text string) wordCountMap {
 	counts := make(map[string]int)
 	total := 0
 	for _, word := range splitToWords(text) {
@@ -49,7 +48,7 @@ func newWordCountMap(text string) *wordCountMap {
 		counts[word]++
 		total++
 	}
-	return &wordCountMap{counts, total}
+	return wordCountMap{counts, total}
 }
 
 func splitToWords(text string) []string {
@@ -57,7 +56,7 @@ func splitToWords(text string) []string {
 	return strings.Split(abc, " ")
 }
 
-func (detector *SimilarWordCountDetector) getWordCountMap(post Post) *wordCountMap {
+func (detector SimilarWordCountDetector) getWordCountMap(post Post) wordCountMap {
 	if wcmap, ok := detector.indexMap[post.Id]; ok {
 		return wcmap
 	}
@@ -66,7 +65,7 @@ func (detector *SimilarWordCountDetector) getWordCountMap(post Post) *wordCountM
 	return wcmap
 }
 
-func (detector *SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
+func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
 	wcmap := detector.getWordCountMap(post)
 
 	duplicates := make([]Post, 0)
@@ -79,12 +78,12 @@ func (detector *SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []P
 	return duplicates
 }
 
-func (wcmap *wordCountMap) isSimilar(other *wordCountMap, limitRatio float64) bool {
+func (wcmap wordCountMap) isSimilar(other wordCountMap, limitRatio float64) bool {
 	limit := float64(wcmap.total) * limitRatio
 	return float64(abs(wcmap.total-other.total)) < limit && float64(calcWordCountDiffs(wcmap, other)) < limit
 }
 
-func calcWordCountDiffs(first, second *wordCountMap) int {
+func calcWordCountDiffs(first, second wordCountMap) int {
 	diffs := 0
 	for word, count := range first.counts {
 		otherCount, ok := second.counts[word]

@@ -39,7 +39,7 @@ func Test_defaultDetectorRegistry(t *testing.T) {
 	})
 }
 
-func Test_getDetectors(t *testing.T) {
+func Test_getDetectors_should_work_transparently_for_both_values_and_pointers(t *testing.T) {
 	expected := []Detector{SameBodyDetector{}, &SimilarWordCountDetector{}}
 
 	reg := NewDetectorRegistry()

@@ -31,7 +31,7 @@ func Test_splitToWords(t *testing.T) {
 func Test_wordCounts(t *testing.T) {
 	s := "Hello World hello again"
 
-	expected := &wordCountMap{
+	expected := wordCountMap{
 		counts: map[string]int{
 			"hello": 2,
 			"world": 1,
@@ -46,7 +46,7 @@ func Test_wordCounts(t *testing.T) {
 }
 
 func Test_wordCountDiffs(t *testing.T) {
-	first := &wordCountMap{
+	first := wordCountMap{
 		counts: map[string]int{
 			"hello": 7,
 			"world": 13,
@@ -54,7 +54,7 @@ func Test_wordCountDiffs(t *testing.T) {
 		},
 		total: 7 + 13 + 17,
 	}
-	second := &wordCountMap{
+	second := wordCountMap{
 		counts: map[string]int{
 			"welcome": 23,
 			"new":     29,
