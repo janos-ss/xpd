@@ -216,10 +216,3 @@ func processNewPost(context Context, post Post) {
 
 	repo.Add(post)
 }
-
-func ellipsize(s string, length int) string {
-	if len(s) < length {
-		return s
-	}
-	return s[0:length-3] + "..."
-}
