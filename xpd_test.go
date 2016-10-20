@@ -24,19 +24,19 @@ func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T
 	}
 }
 
-func Test_defaultDetectorRegistry(t *testing.T) {
+func Test_DetectorRegistry(t *testing.T) {
 	detector := NewSimilarWordCountDetector(0.1)
 
 	reg := NewDetectorRegistry()
 	reg.Register(detector)
 
-	if d := reg.Get("xpd.SimilarWordCountDetector"); !reflect.DeepEqual(d, detector) {
+	if d, ok := reg.Get("xpd.SimilarWordCountDetector"); !ok || !reflect.DeepEqual(d, detector) {
 		t.Errorf("got %#v, expected %#v", d, detector)
 	}
 
-	assertPanic(t, "did not crash on unknown Detector, but it should have", func() {
-		reg.Get("nonexistent")
-	})
+	if d, ok := reg.Get("nonexistent"); ok {
+		t.Fatalf("got %#v, but expected no such detector", d)
+	}
 }
 
 func Test_getDetectors_should_work_transparently_for_both_values_and_pointers(t *testing.T) {
@@ -47,15 +47,11 @@ func Test_getDetectors_should_work_transparently_for_both_values_and_pointers(t 
 		reg.Register(detector)
 	}
 
-	detectors := getDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector"})
+	detectors := getDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector", "garbage"})
 
 	if !reflect.DeepEqual(detectors, expected) {
 		t.Errorf("got %#v, expected %#v", detectors, expected)
 	}
-
-	assertPanic(t, "did not crash on unknown Detector, but it should have", func() {
-		getDetectors(reg, []string{"nonexistent"})
-	})
 }
 
 func assertPanic(t *testing.T, message string, f func()) {

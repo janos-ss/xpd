@@ -37,32 +37,26 @@ type Detector interface {
 	FindDuplicates(Post, []Post) []Post
 }
 
-type DetectorRegistry interface {
-	Register(Detector)
-	Get(string) Detector
-}
-
-type defaultDetectorRegistry struct {
+type DetectorRegistry struct {
 	detectors map[string]Detector
 }
 
 func NewDetectorRegistry() DetectorRegistry {
-	return defaultDetectorRegistry{make(map[string]Detector)}
+	return DetectorRegistry{make(map[string]Detector)}
 }
 
-func (reg defaultDetectorRegistry) Register(detector Detector) {
+func (registry DetectorRegistry) Register(detector Detector) {
 	name := reflect.TypeOf(detector).String()
 	if reflect.TypeOf(detector).Kind() == reflect.Ptr {
 		name = name[1:]
 	}
-	reg.detectors[name] = detector
+	log.Print("adding detector:", name)
+	registry.detectors[name] = detector
 }
 
-func (reg defaultDetectorRegistry) Get(name string) Detector {
-	if detector, ok := reg.detectors[name]; ok {
-		return detector
-	}
-	panic("no such detector: " + name)
+func (registry DetectorRegistry) Get(name string) (Detector, bool) {
+	detector, ok := registry.detectors[name]
+	return detector, ok
 }
 
 type Listener interface {
@@ -155,9 +149,7 @@ func ReadConfig(configfile string) Config {
 func NewContext(config Config) Context {
 	readers := getReaders(config)
 
-	detectorRegistry := NewDetectorRegistry()
-	detectorRegistry.Register(SameBodyDetector{})
-	detectorRegistry.Register(NewSimilarWordCountDetector(0.2))
+	detectorRegistry := getDetectorRegistry()
 
 	detectors := getDetectors(detectorRegistry, config.DetectorNames)
 
@@ -171,19 +163,31 @@ func NewContext(config Config) Context {
 	}
 }
 
+func getDetectorRegistry() DetectorRegistry {
+	registry := NewDetectorRegistry()
+	registry.Register(SameBodyDetector{})
+	registry.Register(NewSimilarWordCountDetector(0.2))
+
+	return registry
+}
+
 func getReaders(config Config) []FeedReader {
 	readers := make([]FeedReader, len(config.Feeds))
 	for i, feed := range config.Feeds {
-		log.Printf("Creating reader for: %#v\n", feed.Id)
+		log.Printf("adding reader for: %#v\n", feed.Id)
 		readers[i] = NewRssReader(feed.Url, feed)
 	}
 	return readers
 }
 
-func getDetectors(reg DetectorRegistry, detectorNames []string) []Detector {
-	detectors := make([]Detector, len(detectorNames))
-	for i, name := range detectorNames {
-		detectors[i] = reg.Get(name)
+func getDetectors(registry DetectorRegistry, detectorNames []string) []Detector {
+	detectors := make([]Detector, 0)
+	for _, name := range detectorNames {
+		if detector, ok := registry.Get(name); ok {
+			detectors = append(detectors, detector)
+		} else {
+			log.Printf("no such detector: %s", name)
+		}
 	}
 	return detectors
 }
