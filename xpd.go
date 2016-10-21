@@ -121,8 +121,15 @@ func run(context Context, count int) {
 }
 
 type Config struct {
-	Feeds         []Feed   `yaml:"feeds,omitempty"`
-	DetectorNames []string `yaml:"detectors,omitempty"`
+	Feeds     []Feed
+	Detectors []string
+	Listeners []struct {
+		Type      string
+		From      string
+		Pass      string
+		Subject   string
+		Recipient string
+	}
 }
 
 func ReadConfig(configfile string) Config {
@@ -148,7 +155,7 @@ func NewContext(config Config) Context {
 
 	detectorRegistry := getDetectorRegistry()
 
-	detectors := getDetectors(detectorRegistry, config.DetectorNames)
+	detectors := getDetectors(detectorRegistry, config.Detectors)
 
 	listeners := []Listener{ConsolePrinterListener{}}
 
@@ -177,9 +184,9 @@ func getReaders(config Config) []FeedReader {
 	return readers
 }
 
-func getDetectors(registry DetectorRegistry, detectorNames []string) []Detector {
+func getDetectors(registry DetectorRegistry, names []string) []Detector {
 	detectors := make([]Detector, 0)
-	for _, name := range detectorNames {
+	for _, name := range names {
 		if detector, ok := registry.Get(name); ok {
 			detectors = append(detectors, detector)
 		} else {

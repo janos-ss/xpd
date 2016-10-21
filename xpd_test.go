@@ -69,7 +69,7 @@ func Test_NewContext(t *testing.T) {
 			{Id: "dummy1", Url: "dummy1"},
 			{Id: "dummy2", Url: "dummy2"},
 		},
-		DetectorNames: []string{"xpd.SameBodyDetector"},
+		Detectors: []string{"xpd.SameBodyDetector"},
 	}
 	context := NewContext(config)
 
@@ -80,8 +80,8 @@ func Test_NewContext(t *testing.T) {
 		t.Error("got no feed readers, expected at least 1")
 	}
 
-	if len(context.Detectors) != len(config.DetectorNames) {
-		t.Errorf("got different number of detectors than specified names; %#v <- %#v", context.Detectors, config.DetectorNames)
+	if len(context.Detectors) != len(config.Detectors) {
+		t.Errorf("got different number of detectors than specified names; %#v <- %#v", context.Detectors, config.Detectors)
 	}
 	if len(context.Detectors) < 1 {
 		t.Error("got no detectors, expected at least 1")
@@ -101,7 +101,7 @@ func Test_ReadConfig_valid_example(t *testing.T) {
 	if len(config.Feeds) < 1 {
 		t.Error("got no feeds, expected at least 1")
 	}
-	if len(config.DetectorNames) < 1 {
+	if len(config.Detectors) < 1 {
 		t.Error("got no detectors, expected at least 1")
 	}
 }
