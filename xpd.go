@@ -125,10 +125,7 @@ type Config struct {
 	Detectors []string
 	Listeners []struct {
 		Type      string
-		From      string
-		Pass      string
-		Subject   string
-		Recipient string
+		Params    map[string]string
 	}
 }
 
