@@ -187,8 +187,13 @@ func Test_waitForPosts(t *testing.T) {
 	}
 }
 
+func restoreDefaultCount() {
+	defaultCount = getDefaultCount()
+}
+
 func Test_run(t *testing.T) {
 	defaultCount = 0
+	defer restoreDefaultCount()
 
 	post := Post{}
 
@@ -212,6 +217,7 @@ func Test_run(t *testing.T) {
 
 func Test_RunForever_fails_if_config_file_nonexistent(t *testing.T) {
 	defaultCount = 0
+	defer restoreDefaultCount()
 
 	if RunForever("xpd.yml.example") != nil {
 		t.Fatal("got failure; expected RunForever to succeed with valid config file")
@@ -224,6 +230,7 @@ func Test_RunForever_fails_if_config_file_nonexistent(t *testing.T) {
 
 func Test_runForever_fails_if_config_invalid(t *testing.T) {
 	defaultCount = 0
+	defer restoreDefaultCount()
 
 	validConfig := &Config{
 		Feeds: []Feed{{}},
