@@ -77,15 +77,16 @@ type Context struct {
 	PostRepository PostRepository
 }
 
-const maxUint = ^uint(0)
-const MaxInt = int(maxUint >> 1)
-
 func RunForever(configfile string) error {
 	context, err := ParseConfig(ReadConfig(configfile))
 	if err != nil {
 		return err
 	}
-	count := MaxInt / len(context.Readers)
+
+	maxUint := ^uint(0)
+	maxInt := int(maxUint >> 1)
+
+	count := maxInt / len(context.Readers)
 	run(context, count)
 	return nil
 }
