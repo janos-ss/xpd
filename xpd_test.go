@@ -248,3 +248,9 @@ func Test_runForever_fails_if_config_invalid(t *testing.T) {
 		t.Fatal("got success; expected runForever to fail if detectors missing")
 	}
 }
+
+func Test_defaultCount(t *testing.T) {
+	if expected := 1<<63 - 1; getDefaultCount() != expected {
+		t.Fatalf("got defaultCount = %d; expected %d", getDefaultCount(), expected)
+	}
+}

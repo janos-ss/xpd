@@ -13,6 +13,7 @@ import (
 // poll RSS feeds once per 15 minutes
 const rssPollingMillis = 1000 * 60 * 15
 
+// number of recent posts to keep in memory
 const defaultPostRepositoryCapacity = 10000
 
 type Post struct {
