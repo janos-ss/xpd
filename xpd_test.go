@@ -33,7 +33,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 	f()
 }
 
-func Test_NewContext(t *testing.T) {
+func Test_ParseConfig(t *testing.T) {
 	config := Config{
 		Feeds: []Feed{
 			{Id: "dummy1", Url: "dummy1"},
@@ -41,7 +41,7 @@ func Test_NewContext(t *testing.T) {
 		},
 		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
-	context, _ := NewContext(config)
+	context, _ := ParseConfig(config)
 
 	if len(context.Readers) != len(config.Feeds) {
 		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.Readers, config.Feeds)

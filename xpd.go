@@ -81,7 +81,7 @@ const maxUint = ^uint(0)
 const MaxInt = int(maxUint >> 1)
 
 func RunForever(configfile string) error {
-	context, err := NewContext(ReadConfig(configfile))
+	context, err := ParseConfig(ReadConfig(configfile))
 	if err != nil {
 		return err
 	}
@@ -132,7 +132,7 @@ func ReadConfig(configfile string) Config {
 	return config
 }
 
-func NewContext(config Config) (*Context, error) {
+func ParseConfig(config Config) (*Context, error) {
 	readers := parseReaders(config)
 
 	detectors, err := parseDetectors(config.Detectors)
