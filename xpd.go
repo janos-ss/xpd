@@ -134,8 +134,11 @@ func NewContext(config Config) Context {
 	// TODO handle errors
 	detectors, _ := parseDetectors(config.Detectors)
 
+	listeners := []Listener{ConsolePrinterListener{}}
+
 	// TODO handle errors
-	listeners, _ := parseListeners(config.Listeners)
+	extraListeners, _ := parseListeners(config.Listeners)
+	listeners = append(listeners, extraListeners...)
 
 	return Context{
 		Readers:        readers,
@@ -172,9 +175,7 @@ func parseDetectors(items []TypeConfig) ([]Detector, error) {
 }
 
 func parseListeners(items []TypeConfig) ([]Listener, error) {
-	listeners := make([]Listener, 1 + len(items))
-	listeners[0] = ConsolePrinterListener{}
-
+	listeners := make([]Listener, len(items))
 	for i, config := range items {
 		var listener Listener
 		switch config.Type {
@@ -190,7 +191,7 @@ func parseListeners(items []TypeConfig) ([]Listener, error) {
 				},
 			}
 		}
-		listeners[i + 1] = listener
+		listeners[i] = listener
 	}
 	return listeners, nil
 }
