@@ -134,7 +134,8 @@ func NewContext(config Config) Context {
 	// TODO handle errors
 	detectors, _ := parseDetectors(config.Detectors)
 
-	listeners := parseListeners(config.Listeners)
+	// TODO handle errors
+	listeners, _ := parseListeners(config.Listeners)
 
 	return Context{
 		Readers:        readers,
@@ -170,7 +171,7 @@ func parseDetectors(items []TypeConfig) ([]Detector, error) {
 	return detectors, nil
 }
 
-func parseListeners(items []TypeConfig) []Listener {
+func parseListeners(items []TypeConfig) ([]Listener, error) {
 	listeners := make([]Listener, 1 + len(items))
 	listeners[0] = ConsolePrinterListener{}
 
@@ -178,7 +179,7 @@ func parseListeners(items []TypeConfig) []Listener {
 		var listener Listener
 		switch config.Type {
 		default:
-			panic("unknown listener type")
+			return nil, fmt.Errorf("unsupported listener type: %s", config.Type)
 		case "gmail":
 			listener = MailerListener{
 				Mailer: mail.GmailMailer{
@@ -191,7 +192,7 @@ func parseListeners(items []TypeConfig) []Listener {
 		}
 		listeners[i + 1] = listener
 	}
-	return listeners
+	return listeners, nil
 }
 
 func waitForPosts(reader FeedReader, posts chan<- Post, count int) {
