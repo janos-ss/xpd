@@ -170,6 +170,8 @@ func Test_waitForPosts(t *testing.T) {
 }
 
 func Test_run(t *testing.T) {
+	defaultCount = 0
+
 	post := Post{}
 
 	reader := &mockReader{post: post}

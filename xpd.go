@@ -117,7 +117,7 @@ func run(context *Context, count int) {
 		go waitForPosts(reader, posts, count)
 	}
 
-	for i := 0; i < count*len(context.Readers); i++ {
+	for i := 0; i < count; i++ {
 		post := <-posts
 		processNewPost(context, post)
 	}
