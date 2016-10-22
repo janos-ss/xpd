@@ -71,59 +71,6 @@ func (repo *defaultPostRepository) Add(post Post) {
 	repo.posts = append(posts, post)
 }
 
-type Context struct {
-	Readers        []FeedReader
-	Detectors      []Detector
-	Listeners      []Listener
-	PostRepository PostRepository
-}
-
-// the default number of posts to read; normally infinity, set to 0 by some tests
-var defaultCount int
-
-func init() {
-	defaultCount = getDefaultCount()
-}
-
-func getDefaultCount() int {
-	maxUint := ^uint(0)
-	maxInt := int(maxUint >> 1)
-	return maxInt
-}
-
-func RunForever(path string) error {
-	config, err := ReadConfig(path)
-	if err != nil {
-		return err
-	}
-
-	return runForever(config)
-}
-
-func runForever(config *Config) error {
-	context, err := ParseContext(config)
-	if err != nil {
-		return err
-	}
-
-	run(context, defaultCount)
-
-	return nil
-}
-
-func run(context *Context, count int) {
-	posts := make(chan Post)
-
-	for _, reader := range context.Readers {
-		go waitForPosts(reader, posts, count)
-	}
-
-	for i := 0; i < count; i++ {
-		post := <-posts
-		processNewPost(context, post)
-	}
-}
-
 type TypeConfig struct {
 	Type      string
 	Params    map[string]string
@@ -149,6 +96,13 @@ func ReadConfig(path string) (*Config, error) {
 	}
 
 	return &config, nil
+}
+
+type Context struct {
+	Readers        []FeedReader
+	Detectors      []Detector
+	Listeners      []Listener
+	PostRepository PostRepository
 }
 
 func ParseContext(config *Config) (*Context, error) {
@@ -230,6 +184,52 @@ func parseListeners(items []TypeConfig) ([]Listener, error) {
 		listeners[i] = listener
 	}
 	return listeners, nil
+}
+
+// the default number of posts to read; normally infinity, set to 0 by some tests
+var defaultCount int
+
+func init() {
+	defaultCount = getDefaultCount()
+}
+
+func getDefaultCount() int {
+	maxUint := ^uint(0)
+	maxInt := int(maxUint >> 1)
+	return maxInt
+}
+
+func RunForever(path string) error {
+	config, err := ReadConfig(path)
+	if err != nil {
+		return err
+	}
+
+	return runForever(config)
+}
+
+func runForever(config *Config) error {
+	context, err := ParseContext(config)
+	if err != nil {
+		return err
+	}
+
+	run(context, defaultCount)
+
+	return nil
+}
+
+func run(context *Context, count int) {
+	posts := make(chan Post)
+
+	for _, reader := range context.Readers {
+		go waitForPosts(reader, posts, count)
+	}
+
+	for i := 0; i < count; i++ {
+		post := <-posts
+		processNewPost(context, post)
+	}
 }
 
 func waitForPosts(reader FeedReader, posts chan<- Post, count int) {
