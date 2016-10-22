@@ -35,10 +35,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 
 func Test_ParseContext(t *testing.T) {
 	config := &Config{
-		Feeds: []Feed{
-			{Id: "dummy1", Url: "dummy1"},
-			{Id: "dummy2", Url: "dummy2"},
-		},
+		Feeds: []Feed{{}},
 		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
 	context, err := ParseContext(config)
@@ -69,13 +66,13 @@ func Test_ParseContext(t *testing.T) {
 	}
 
 	brokenConfig := *config
-	brokenConfig.Feeds = []Feed{}
+	brokenConfig.Feeds = nil
 	if _, err := ParseContext(&brokenConfig); err == nil {
 		t.Error("config parser should fail if no feeds")
 	}
 
 	brokenConfig = *config
-	brokenConfig.Detectors = []TypeConfig{}
+	brokenConfig.Detectors = nil
 	if _, err := ParseContext(&brokenConfig); err == nil {
 		t.Error("config parser should fail if no detectors")
 	}
