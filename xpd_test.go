@@ -41,7 +41,10 @@ func Test_ParseConfig(t *testing.T) {
 		},
 		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
-	context, _ := ParseConfig(config)
+	context, err := ParseConfig(config)
+	if err != nil {
+		t.Fatal("failed to parse valid config")
+	}
 
 	if len(context.Readers) != len(config.Feeds) {
 		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.Readers, config.Feeds)
@@ -60,8 +63,21 @@ func Test_ParseConfig(t *testing.T) {
 	if len(context.Listeners) < 1 {
 		t.Error("got no listeners, expected at least 1")
 	}
+
 	if context.PostRepository == nil {
 		t.Error("got nil PostRepository, expected non-nil")
+	}
+
+	brokenConfig := *config
+	brokenConfig.Feeds = []Feed{}
+	if _, err := ParseConfig(&brokenConfig); err == nil {
+		t.Error("config parser should fail if no feeds")
+	}
+
+	brokenConfig = *config
+	brokenConfig.Detectors = []TypeConfig{}
+	if _, err := ParseConfig(&brokenConfig); err == nil {
+		t.Error("config parser should fail if no detectors")
 	}
 }
 

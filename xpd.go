@@ -8,6 +8,7 @@ import (
 	"time"
 	"github.com/xpd-org/xpd/mail"
 	"fmt"
+	"errors"
 )
 
 // poll RSS feeds once per 15 minutes
@@ -132,6 +133,14 @@ func ReadConfig(configfile string) (*Config, error) {
 
 func ParseConfig(config *Config) (*Context, error) {
 	readers := parseReaders(config)
+
+	if len(config.Feeds) == 0 {
+		return nil, errors.New("configuration error: you must configure at least one feed")
+	}
+
+	if len(config.Detectors) == 0 {
+		return nil, errors.New("configuration error: you must configure at least one detector")
+	}
 
 	detectors, err := parseDetectors(config.Detectors)
 	if err != nil {
