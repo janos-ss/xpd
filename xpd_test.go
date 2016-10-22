@@ -41,7 +41,7 @@ func Test_ParseConfig(t *testing.T) {
 		},
 		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
-	context, err := ParseConfig(config)
+	context, err := ParseContext(config)
 	if err != nil {
 		t.Fatal("failed to parse valid config")
 	}
@@ -70,13 +70,13 @@ func Test_ParseConfig(t *testing.T) {
 
 	brokenConfig := *config
 	brokenConfig.Feeds = []Feed{}
-	if _, err := ParseConfig(&brokenConfig); err == nil {
+	if _, err := ParseContext(&brokenConfig); err == nil {
 		t.Error("config parser should fail if no feeds")
 	}
 
 	brokenConfig = *config
 	brokenConfig.Detectors = []TypeConfig{}
-	if _, err := ParseConfig(&brokenConfig); err == nil {
+	if _, err := ParseContext(&brokenConfig); err == nil {
 		t.Error("config parser should fail if no detectors")
 	}
 }
@@ -187,5 +187,40 @@ func Test_run(t *testing.T) {
 
 	if !reflect.DeepEqual([]Post{post}, repo.FindRecent()) {
 		t.Fatalf("got %#v, expected []Post{%#v}", repo.FindRecent(), post)
+	}
+}
+
+func Test_RunForever_fails_if_config_file_nonexistent(t *testing.T) {
+	defaultCount = 0
+
+	if RunForever("nonexistent") == nil {
+		t.Fatal("got success; expected RunForever to fail if config file nonexistent")
+	}
+}
+
+func Test_runForever_fails_if_config_invalid(t *testing.T) {
+	defaultCount = 0
+
+	validConfig := &Config{
+		Feeds: []Feed{{}},
+		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
+	}
+
+	if err := runForever(validConfig); err != nil {
+		t.Fatalf("got failure: %s; runForever should have worked with valid config", err)
+	}
+
+	var brokenConfig Config
+
+	brokenConfig = *validConfig
+	brokenConfig.Feeds = nil
+	if runForever(&brokenConfig) == nil {
+		t.Fatal("got success; expected runForever to fail if feeds missing")
+	}
+
+	brokenConfig = *validConfig
+	brokenConfig.Detectors = nil
+	if runForever(&brokenConfig) == nil {
+		t.Fatal("got success; expected runForever to fail if detectors missing")
 	}
 }

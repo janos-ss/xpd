@@ -4,7 +4,6 @@ import (
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"path/filepath"
 	"time"
 	"github.com/xpd-org/xpd/mail"
 	"fmt"
@@ -78,12 +77,36 @@ type Context struct {
 	PostRepository PostRepository
 }
 
-func RunForever(context *Context) {
+func RunForever(path string) error {
+	config, err := ReadConfig(path)
+	if err != nil {
+		return err
+	}
+
+	return runForever(config)
+}
+
+var defaultCount int
+
+func init() {
+	defaultCount = getDefaultCount()
+}
+
+func getDefaultCount() int {
 	maxUint := ^uint(0)
 	maxInt := int(maxUint >> 1)
+	return maxInt
+}
 
-	count := maxInt / len(context.Readers)
-	run(context, count)
+func runForever(config *Config) error {
+	context, err := ParseContext(config)
+	if err != nil {
+		return err
+	}
+
+	run(context, defaultCount)
+
+	return nil
 }
 
 func run(context *Context, count int) {
@@ -110,13 +133,8 @@ type Config struct {
 	Listeners []TypeConfig
 }
 
-func ReadConfig(configfile string) (*Config, error) {
-	filename, err := filepath.Abs(configfile)
-	if err != nil {
-		return nil, err
-	}
-
-	yamlFile, err := ioutil.ReadFile(filename)
+func ReadConfig(path string) (*Config, error) {
+	yamlFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
@@ -131,7 +149,7 @@ func ReadConfig(configfile string) (*Config, error) {
 	return &config, nil
 }
 
-func ParseConfig(config *Config) (*Context, error) {
+func ParseContext(config *Config) (*Context, error) {
 	readers := parseReaders(config)
 
 	if len(config.Feeds) == 0 {
