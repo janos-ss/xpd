@@ -41,7 +41,7 @@ func Test_NewContext(t *testing.T) {
 		},
 		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
-	context := NewContext(config)
+	context, _ := NewContext(config)
 
 	if len(context.Readers) != len(config.Feeds) {
 		t.Errorf("got different number of feed readers than specified feeds; %#v <- %#v", context.Readers, config.Feeds)
@@ -102,7 +102,7 @@ func Test_processPost(t *testing.T) {
 	listener := &mockListener{}
 	repo := NewPostRepository()
 
-	context := Context{
+	context := &Context{
 		Detectors:      []Detector{SameBodyDetector{}},
 		Listeners:      []Listener{listener},
 		PostRepository: repo,
@@ -157,7 +157,7 @@ func Test_run(t *testing.T) {
 	listener := &mockListener{}
 	repo := NewPostRepository()
 
-	context := Context{
+	context := &Context{
 		Readers:        []FeedReader{reader},
 		Detectors:      []Detector{SameBodyDetector{}},
 		Listeners:      []Listener{listener},

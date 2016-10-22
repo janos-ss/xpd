@@ -80,13 +80,17 @@ type Context struct {
 const maxUint = ^uint(0)
 const MaxInt = int(maxUint >> 1)
 
-func RunForever(configfile string) {
-	context := NewContext(ReadConfig(configfile))
+func RunForever(configfile string) error {
+	context, err := NewContext(ReadConfig(configfile))
+	if err != nil {
+		return err
+	}
 	count := MaxInt / len(context.Readers)
 	run(context, count)
+	return nil
 }
 
-func run(context Context, count int) {
+func run(context *Context, count int) {
 	posts := make(chan Post)
 
 	for _, reader := range context.Readers {
@@ -128,24 +132,29 @@ func ReadConfig(configfile string) Config {
 	return config
 }
 
-func NewContext(config Config) Context {
+func NewContext(config Config) (*Context, error) {
 	readers := parseReaders(config)
 
-	// TODO handle errors
-	detectors, _ := parseDetectors(config.Detectors)
+	detectors, err := parseDetectors(config.Detectors)
+	if err != nil {
+		return nil, err
+	}
+
+	extraListeners, err := parseListeners(config.Listeners)
+	if err != nil {
+		return nil, err
+	}
 
 	listeners := []Listener{ConsolePrinterListener{}}
-
-	// TODO handle errors
-	extraListeners, _ := parseListeners(config.Listeners)
 	listeners = append(listeners, extraListeners...)
 
-	return Context{
+	context := &Context{
 		Readers:        readers,
 		Detectors:      detectors,
 		Listeners:      listeners,
 		PostRepository: NewPostRepository(),
 	}
+	return context, nil
 }
 
 func parseReaders(config Config) []FeedReader {
@@ -206,7 +215,7 @@ func waitForPosts(reader FeedReader, posts chan<- Post, count int) {
 	}
 }
 
-func processNewPost(context Context, post Post) {
+func processNewPost(context *Context, post Post) {
 	repo := context.PostRepository
 	recent := repo.FindRecent()
 
