@@ -99,8 +99,8 @@ func Test_parseListeners_gmail(t *testing.T) {
 	}
 }
 
-func Test_ReadConfig_valid_example(t *testing.T) {
-	config, err := ReadConfig("xpd.yml.example")
+func Test_ParseConfig_valid_example(t *testing.T) {
+	config, err := ParseConfig("xpd.yml.example")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -113,14 +113,14 @@ func Test_ReadConfig_valid_example(t *testing.T) {
 	}
 }
 
-func Test_ReadConfig_nonexistent_should_crash(t *testing.T) {
-	if _, err := ReadConfig("nonexistent"); err == nil {
+func Test_ParseConfig_nonexistent_should_crash(t *testing.T) {
+	if _, err := ParseConfig("nonexistent"); err == nil {
 		t.Fatal("should fail to read config of non-existent file")
 	}
 }
 
-func Test_ReadConfig_malformed_should_crash(t *testing.T) {
-	if _, err := ReadConfig("xpd.go"); err == nil {
+func Test_ParseConfig_malformed_should_crash(t *testing.T) {
+	if _, err := ParseConfig("xpd.go"); err == nil {
 		t.Fatal("should fail to parse malformed config file")
 	}
 }

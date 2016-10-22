@@ -82,7 +82,7 @@ type Config struct {
 	Listeners []TypeConfig
 }
 
-func ReadConfig(path string) (*Config, error) {
+func ParseConfig(path string) (*Config, error) {
 	yamlFile, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
@@ -200,7 +200,7 @@ func getDefaultCount() int {
 }
 
 func RunForever(path string) error {
-	config, err := ReadConfig(path)
+	config, err := ParseConfig(path)
 	if err != nil {
 		return err
 	}
