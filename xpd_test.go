@@ -33,7 +33,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 	f()
 }
 
-func Test_ParseConfig(t *testing.T) {
+func Test_ParseContext(t *testing.T) {
 	config := &Config{
 		Feeds: []Feed{
 			{Id: "dummy1", Url: "dummy1"},
@@ -43,7 +43,7 @@ func Test_ParseConfig(t *testing.T) {
 	}
 	context, err := ParseContext(config)
 	if err != nil {
-		t.Fatal("failed to parse valid config")
+		t.Fatal("failed to parse context from valid config")
 	}
 
 	if len(context.Readers) != len(config.Feeds) {

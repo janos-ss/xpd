@@ -77,15 +77,7 @@ type Context struct {
 	PostRepository PostRepository
 }
 
-func RunForever(path string) error {
-	config, err := ReadConfig(path)
-	if err != nil {
-		return err
-	}
-
-	return runForever(config)
-}
-
+// the default number of posts to read; normally infinity, set to 0 by some tests
 var defaultCount int
 
 func init() {
@@ -96,6 +88,15 @@ func getDefaultCount() int {
 	maxUint := ^uint(0)
 	maxInt := int(maxUint >> 1)
 	return maxInt
+}
+
+func RunForever(path string) error {
+	config, err := ReadConfig(path)
+	if err != nil {
+		return err
+	}
+
+	return runForever(config)
 }
 
 func runForever(config *Config) error {
