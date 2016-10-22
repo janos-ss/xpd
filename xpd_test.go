@@ -24,36 +24,6 @@ func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T
 	}
 }
 
-func Test_DetectorRegistry(t *testing.T) {
-	detector := NewSimilarWordCountDetector(0.1)
-
-	reg := NewDetectorRegistry()
-	reg.Register(detector)
-
-	if d, ok := reg.Get("xpd.SimilarWordCountDetector"); !ok || !reflect.DeepEqual(d, detector) {
-		t.Errorf("got %#v, expected %#v", d, detector)
-	}
-
-	if d, ok := reg.Get("nonexistent"); ok {
-		t.Fatalf("got %#v, but expected no such detector", d)
-	}
-}
-
-func Test_parseDetectors_should_work_transparently_for_both_values_and_pointers(t *testing.T) {
-	expected := []Detector{SameBodyDetector{}, &SimilarWordCountDetector{}}
-
-	reg := NewDetectorRegistry()
-	for _, detector := range expected {
-		reg.Register(detector)
-	}
-
-	detectors := parseDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector", "garbage"})
-
-	if !reflect.DeepEqual(detectors, expected) {
-		t.Errorf("got %#v, expected %#v", detectors, expected)
-	}
-}
-
 func assertPanic(t *testing.T, message string, f func()) {
 	defer func() {
 		if r := recover(); r == nil {
@@ -69,7 +39,7 @@ func Test_NewContext(t *testing.T) {
 			{Id: "dummy1", Url: "dummy1"},
 			{Id: "dummy2", Url: "dummy2"},
 		},
-		Detectors: []string{"xpd.SameBodyDetector"},
+		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
 	context := NewContext(config)
 

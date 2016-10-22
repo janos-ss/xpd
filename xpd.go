@@ -5,9 +5,9 @@ import (
 	"io/ioutil"
 	"log"
 	"path/filepath"
-	"reflect"
 	"time"
 	"github.com/xpd-org/xpd/mail"
+	"fmt"
 )
 
 // poll RSS feeds once per 15 minutes
@@ -36,28 +36,6 @@ type FeedReader interface {
 
 type Detector interface {
 	FindDuplicates(Post, []Post) []Post
-}
-
-type DetectorRegistry struct {
-	detectors map[string]Detector
-}
-
-func NewDetectorRegistry() DetectorRegistry {
-	return DetectorRegistry{make(map[string]Detector)}
-}
-
-func (registry DetectorRegistry) Register(detector Detector) {
-	name := reflect.TypeOf(detector).String()
-	if reflect.TypeOf(detector).Kind() == reflect.Ptr {
-		name = name[1:]
-	}
-	log.Println("adding detector:", name)
-	registry.detectors[name] = detector
-}
-
-func (registry DetectorRegistry) Get(name string) (Detector, bool) {
-	detector, ok := registry.detectors[name]
-	return detector, ok
 }
 
 type Listener interface {
@@ -121,15 +99,15 @@ func run(context Context, count int) {
 	}
 }
 
-type ListenerConfig struct {
+type TypeConfig struct {
 	Type      string
 	Params    map[string]string
 }
 
 type Config struct {
 	Feeds     []Feed
-	Detectors []string
-	Listeners []ListenerConfig
+	Detectors []TypeConfig
+	Listeners []TypeConfig
 }
 
 func ReadConfig(configfile string) Config {
@@ -153,9 +131,8 @@ func ReadConfig(configfile string) Config {
 func NewContext(config Config) Context {
 	readers := parseReaders(config)
 
-	detectorRegistry := getDetectorRegistry()
-
-	detectors := parseDetectors(detectorRegistry, config.Detectors)
+	// TODO handle errors
+	detectors, _ := parseDetectors(config.Detectors)
 
 	listeners := parseListeners(config)
 
@@ -176,24 +153,21 @@ func parseReaders(config Config) []FeedReader {
 	return readers
 }
 
-func getDetectorRegistry() DetectorRegistry {
-	registry := NewDetectorRegistry()
-	registry.Register(SameBodyDetector{})
-	registry.Register(NewSimilarWordCountDetector(0.2))
-
-	return registry
-}
-
-func parseDetectors(registry DetectorRegistry, names []string) []Detector {
-	detectors := make([]Detector, 0)
-	for _, name := range names {
-		if detector, ok := registry.Get(name); ok {
-			detectors = append(detectors, detector)
-		} else {
-			log.Println("no such detector:", name)
+func parseDetectors(items []TypeConfig) ([]Detector, error) {
+	detectors := make([]Detector, len(items))
+	for i, config := range items {
+		var detector Detector
+		switch config.Type {
+		default:
+			return nil, fmt.Errorf("unsupported detector type: %s", config.Type)
+		case "SimilarWordCountDetector":
+			detector = NewSimilarWordCountDetector(0.2)
+		case "SameBodyDetector":
+			detector = SameBodyDetector{}
 		}
+		detectors[i] = detector
 	}
-	return detectors
+	return detectors, nil
 }
 
 func parseListeners(config Config) []Listener {

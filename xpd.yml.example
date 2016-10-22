@@ -6,5 +6,5 @@ feeds:
   - id: testing
     url: http://localhost/feeds/testing.xml
 detectors:
-  - xpd.SameBodyDetector
-  - xpd.SimilarWordCountDetector
+  - type: SameBodyDetector
+  - type: SimilarWordCountDetector
