@@ -197,14 +197,14 @@ func parseDetectors(registry DetectorRegistry, names []string) []Detector {
 }
 
 func parseListeners(config Config) []Listener {
-	listeners := make([]Listener, len(config.Listeners))
+	listeners := make([]Listener, 1 + len(config.Listeners))
+	listeners[0] = ConsolePrinterListener{}
+
 	for i, config := range config.Listeners {
 		var listener Listener
 		switch config.Type {
 		default:
 			panic("unknown listener type")
-		case "console":
-			listener = ConsolePrinterListener{}
 		case "gmail":
 			listener = MailerListener{
 				Mailer: mail.GmailMailer{
@@ -215,7 +215,7 @@ func parseListeners(config Config) []Listener {
 				},
 			}
 		}
-		listeners[i] = listener
+		listeners[i + 1] = listener
 	}
 	return listeners
 }
