@@ -39,7 +39,7 @@ func Test_DetectorRegistry(t *testing.T) {
 	}
 }
 
-func Test_getDetectors_should_work_transparently_for_both_values_and_pointers(t *testing.T) {
+func Test_parseDetectors_should_work_transparently_for_both_values_and_pointers(t *testing.T) {
 	expected := []Detector{SameBodyDetector{}, &SimilarWordCountDetector{}}
 
 	reg := NewDetectorRegistry()
@@ -47,7 +47,7 @@ func Test_getDetectors_should_work_transparently_for_both_values_and_pointers(t 
 		reg.Register(detector)
 	}
 
-	detectors := getDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector", "garbage"})
+	detectors := parseDetectors(reg, []string{"xpd.SameBodyDetector", "xpd.SimilarWordCountDetector", "garbage"})
 
 	if !reflect.DeepEqual(detectors, expected) {
 		t.Errorf("got %#v, expected %#v", detectors, expected)

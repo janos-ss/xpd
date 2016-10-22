@@ -151,13 +151,13 @@ func ReadConfig(configfile string) Config {
 }
 
 func NewContext(config Config) Context {
-	readers := getReaders(config)
+	readers := parseReaders(config)
 
 	detectorRegistry := getDetectorRegistry()
 
-	detectors := getDetectors(detectorRegistry, config.Detectors)
+	detectors := parseDetectors(detectorRegistry, config.Detectors)
 
-	listeners := getListeners(config)
+	listeners := parseListeners(config)
 
 	return Context{
 		Readers:        readers,
@@ -167,7 +167,7 @@ func NewContext(config Config) Context {
 	}
 }
 
-func getReaders(config Config) []FeedReader {
+func parseReaders(config Config) []FeedReader {
 	readers := make([]FeedReader, len(config.Feeds))
 	for i, feed := range config.Feeds {
 		log.Println("adding feed:", feed.Id, feed.Url)
@@ -184,7 +184,7 @@ func getDetectorRegistry() DetectorRegistry {
 	return registry
 }
 
-func getDetectors(registry DetectorRegistry, names []string) []Detector {
+func parseDetectors(registry DetectorRegistry, names []string) []Detector {
 	detectors := make([]Detector, 0)
 	for _, name := range names {
 		if detector, ok := registry.Get(name); ok {
@@ -196,7 +196,7 @@ func getDetectors(registry DetectorRegistry, names []string) []Detector {
 	return detectors
 }
 
-func getListeners(config Config) []Listener {
+func parseListeners(config Config) []Listener {
 	listeners := make([]Listener, len(config.Listeners))
 	for i, config := range config.Listeners {
 		var listener Listener
