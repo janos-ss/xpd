@@ -9,11 +9,11 @@ type Mailer interface {
 }
 
 type MockMailer struct {
-	message string
+	Message string
 }
 
 func (mailer *MockMailer) Send(message string) error {
-	mailer.message = message
+	mailer.Message = message
 	return nil
 }
 

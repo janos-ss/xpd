@@ -8,7 +8,7 @@ func Test_MockMailer_Send(t *testing.T) {
 	mailer := &MockMailer{}
 	mailer.Send(message)
 
-	if mailer.message != message {
-		t.Fatalf("got %s; expected %s", mailer.message, message)
+	if mailer.Message != message {
+		t.Fatalf("got %s; expected %s", mailer.Message, message)
 	}
 }
