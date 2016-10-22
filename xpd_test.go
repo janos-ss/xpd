@@ -89,6 +89,16 @@ func Test_ParseContext(t *testing.T) {
 	}
 }
 
+func Test_parseListeners_gmail(t *testing.T) {
+	listeners, err := parseListeners([]TypeConfig{{Type: "gmail"}})
+	if err != nil {
+		t.Fatalf("got error: %s; expected successful parsing of gmail sender listener", err)
+	}
+	if len(listeners) != 1 {
+		t.Fatalf("got %d listeners; expected 1", len(listeners))
+	}
+}
+
 func Test_ReadConfig_valid_example(t *testing.T) {
 	config, err := ReadConfig("xpd.yml.example")
 	if err != nil {
