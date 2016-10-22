@@ -192,6 +192,10 @@ func Test_run(t *testing.T) {
 func Test_RunForever_fails_if_config_file_nonexistent(t *testing.T) {
 	defaultCount = 0
 
+	if RunForever("xpd.yml.example") != nil {
+		t.Fatal("got failure; expected RunForever to succeed with valid config file")
+	}
+
 	if RunForever("nonexistent") == nil {
 		t.Fatal("got success; expected RunForever to fail if config file nonexistent")
 	}
