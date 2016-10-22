@@ -38,10 +38,17 @@ func parseArgs() Params {
 func main() {
 	params := parseArgs()
 
-	context, err := xpd.ParseConfigFile(params.configfile)
+	config, err := xpd.ReadConfig(params.configfile)
 	if err != nil {
-		fmt.Errorf("error while parsing config file: %s", err.Error())
+		fmt.Printf("error while reading config file: %s\n", err.Error())
 		os.Exit(1)
 	}
+
+	context, err := xpd.ParseConfig(config)
+	if err != nil {
+		fmt.Printf("error while parsing config file: %s", err.Error())
+		os.Exit(1)
+	}
+
 	xpd.RunForever(context)
 }

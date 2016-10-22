@@ -77,10 +77,6 @@ type Context struct {
 	PostRepository PostRepository
 }
 
-func ParseConfigFile(path string) (*Context, error) {
-	return ParseConfig(ReadConfig(path))
-}
-
 func RunForever(context *Context) {
 	maxUint := ^uint(0)
 	maxInt := int(maxUint >> 1)
@@ -113,25 +109,28 @@ type Config struct {
 	Listeners []TypeConfig
 }
 
-func ReadConfig(configfile string) Config {
-	filename, _ := filepath.Abs(configfile)
-	yamlFile, err := ioutil.ReadFile(filename)
-
+func ReadConfig(configfile string) (*Config, error) {
+	filename, err := filepath.Abs(configfile)
 	if err != nil {
-		panic(err)
+		return nil, err
+	}
+
+	yamlFile, err := ioutil.ReadFile(filename)
+	if err != nil {
+		return nil, err
 	}
 
 	var config Config
 
 	err = yaml.Unmarshal(yamlFile, &config)
 	if err != nil {
-		panic(err)
+		return nil, err
 	}
 
-	return config
+	return &config, nil
 }
 
-func ParseConfig(config Config) (*Context, error) {
+func ParseConfig(config *Config) (*Context, error) {
 	readers := parseReaders(config)
 
 	detectors, err := parseDetectors(config.Detectors)
@@ -156,7 +155,7 @@ func ParseConfig(config Config) (*Context, error) {
 	return context, nil
 }
 
-func parseReaders(config Config) []FeedReader {
+func parseReaders(config *Config) []FeedReader {
 	readers := make([]FeedReader, len(config.Feeds))
 	for i, feed := range config.Feeds {
 		log.Println("adding feed:", feed.Id, feed.Url)

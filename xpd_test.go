@@ -34,7 +34,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 }
 
 func Test_ParseConfig(t *testing.T) {
-	config := Config{
+	config := &Config{
 		Feeds: []Feed{
 			{Id: "dummy1", Url: "dummy1"},
 			{Id: "dummy2", Url: "dummy2"},
@@ -66,7 +66,10 @@ func Test_ParseConfig(t *testing.T) {
 }
 
 func Test_ReadConfig_valid_example(t *testing.T) {
-	config := ReadConfig("xpd.yml.example")
+	config, err := ReadConfig("xpd.yml.example")
+	if err != nil {
+		t.Fatal(err)
+	}
 
 	if len(config.Feeds) < 1 {
 		t.Error("got no feeds, expected at least 1")
@@ -77,15 +80,15 @@ func Test_ReadConfig_valid_example(t *testing.T) {
 }
 
 func Test_ReadConfig_nonexistent_should_crash(t *testing.T) {
-	assertPanic(t, "did not crash on non-existent config file, but it should have", func() {
-		ReadConfig("nonexistent")
-	})
+	if _, err := ReadConfig("nonexistent"); err == nil {
+		t.Fatal("should fail to read config of non-existent file")
+	}
 }
 
 func Test_ReadConfig_malformed_should_crash(t *testing.T) {
-	assertPanic(t, "did not crash on malformed config file, but it should have", func() {
-		ReadConfig("xpd.go")
-	})
+	if _, err := ReadConfig("xpd.go"); err == nil {
+		t.Fatal("should fail to parse malformed config file")
+	}
 }
 
 type mockListener struct {
