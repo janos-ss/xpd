@@ -38,5 +38,10 @@ func parseArgs() Params {
 func main() {
 	params := parseArgs()
 
-	xpd.RunForever(params.configfile)
+	context, err := xpd.ParseConfigFile(params.configfile)
+	if err != nil {
+		fmt.Errorf("error while parsing config file: %s", err.Error())
+		os.Exit(1)
+	}
+	xpd.RunForever(context)
 }

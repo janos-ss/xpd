@@ -77,18 +77,16 @@ type Context struct {
 	PostRepository PostRepository
 }
 
-func RunForever(configfile string) error {
-	context, err := ParseConfig(ReadConfig(configfile))
-	if err != nil {
-		return err
-	}
+func ParseConfigFile(path string) (*Context, error) {
+	return ParseConfig(ReadConfig(path))
+}
 
+func RunForever(context *Context) {
 	maxUint := ^uint(0)
 	maxInt := int(maxUint >> 1)
 
 	count := maxInt / len(context.Readers)
 	run(context, count)
-	return nil
 }
 
 func run(context *Context, count int) {
