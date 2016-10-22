@@ -106,19 +106,19 @@ type Context struct {
 }
 
 func ParseContext(config *Config) (*Context, error) {
-	readers := parseReaders(config)
-
 	if len(config.Feeds) == 0 {
-		return nil, errors.New("configuration error: you must configure at least one feed")
+		return nil, errors.New("configuration error: configure at least one feed")
 	}
+
+	if len(config.Detectors) == 0 {
+		return nil, errors.New("configuration error: configure at least one detector")
+	}
+
+	readers := parseReaders(config)
 
 	detectors, err := parseDetectors(config.Detectors)
 	if err != nil {
 		return nil, err
-	}
-
-	if len(config.Detectors) == 0 {
-		return nil, errors.New("configuration error: you must configure at least one detector")
 	}
 
 	extraListeners, err := parseListeners(config.Listeners)
