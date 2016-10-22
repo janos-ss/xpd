@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"time"
+	"github.com/xpd-org/xpd/mail"
 )
 
 // poll RSS feeds once per 15 minutes
@@ -120,13 +121,15 @@ func run(context Context, count int) {
 	}
 }
 
+type ListenerConfig struct {
+	Type      string
+	Params    map[string]string
+}
+
 type Config struct {
 	Feeds     []Feed
 	Detectors []string
-	Listeners []struct {
-		Type      string
-		Params    map[string]string
-	}
+	Listeners []ListenerConfig
 }
 
 func ReadConfig(configfile string) Config {
@@ -154,7 +157,7 @@ func NewContext(config Config) Context {
 
 	detectors := getDetectors(detectorRegistry, config.Detectors)
 
-	listeners := []Listener{ConsolePrinterListener{}}
+	listeners := getListeners(config)
 
 	return Context{
 		Readers:        readers,
@@ -164,14 +167,6 @@ func NewContext(config Config) Context {
 	}
 }
 
-func getDetectorRegistry() DetectorRegistry {
-	registry := NewDetectorRegistry()
-	registry.Register(SameBodyDetector{})
-	registry.Register(NewSimilarWordCountDetector(0.2))
-
-	return registry
-}
-
 func getReaders(config Config) []FeedReader {
 	readers := make([]FeedReader, len(config.Feeds))
 	for i, feed := range config.Feeds {
@@ -179,6 +174,14 @@ func getReaders(config Config) []FeedReader {
 		readers[i] = NewRssReader(feed.Url, feed)
 	}
 	return readers
+}
+
+func getDetectorRegistry() DetectorRegistry {
+	registry := NewDetectorRegistry()
+	registry.Register(SameBodyDetector{})
+	registry.Register(NewSimilarWordCountDetector(0.2))
+
+	return registry
 }
 
 func getDetectors(registry DetectorRegistry, names []string) []Detector {
@@ -191,6 +194,30 @@ func getDetectors(registry DetectorRegistry, names []string) []Detector {
 		}
 	}
 	return detectors
+}
+
+func getListeners(config Config) []Listener {
+	listeners := make([]Listener, len(config.Listeners))
+	for i, config := range config.Listeners {
+		var listener Listener
+		switch config.Type {
+		default:
+			panic("unknown listener type")
+		case "console":
+			listener = ConsolePrinterListener{}
+		case "gmail":
+			listener = MailerListener{
+				Mailer: mail.GmailMailer{
+					From: config.Params["from"],
+					Pass: config.Params["pass"],
+					Recipient: config.Params["recipient"],
+					Subject: config.Params["subject"],
+				},
+			}
+		}
+		listeners[i] = listener
+	}
+	return listeners
 }
 
 func waitForPosts(reader FeedReader, posts chan<- Post, count int) {

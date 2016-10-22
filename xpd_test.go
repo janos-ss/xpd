@@ -70,6 +70,7 @@ func Test_NewContext(t *testing.T) {
 			{Id: "dummy2", Url: "dummy2"},
 		},
 		Detectors: []string{"xpd.SameBodyDetector"},
+		Listeners: []ListenerConfig{{Type: "console"}},
 	}
 	context := NewContext(config)
 
