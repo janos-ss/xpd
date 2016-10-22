@@ -76,6 +76,17 @@ func Test_ParseContext(t *testing.T) {
 	if _, err := ParseContext(&brokenConfig); err == nil {
 		t.Error("config parser should fail if no detectors")
 	}
+
+	brokenConfig.Detectors = []TypeConfig{{Type: "nonexistent"}}
+	if _, err := ParseContext(&brokenConfig); err == nil {
+		t.Error("config parser should fail with invalid detector")
+	}
+
+	brokenConfig = *config
+	brokenConfig.Listeners = []TypeConfig{{Type: "nonexistent"}}
+	if _, err := ParseContext(&brokenConfig); err == nil {
+		t.Error("config parser should fail with invalid listener")
+	}
 }
 
 func Test_ReadConfig_valid_example(t *testing.T) {
