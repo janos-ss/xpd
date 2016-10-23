@@ -22,10 +22,13 @@ type MailerListener struct {
 }
 
 func (listener MailerListener) OnDuplicates(post Post, oldPosts []Post) {
-	message := summaryOfDups(post, oldPosts)
+	log.Println("sending email about post:", post.Id)
 
-	err := listener.Mailer.Send(message)
-	if err != nil {
+	// start message with empty line to avoid interpretation as header fields
+	message := "\n\n"
+	message += summaryOfDups(post, oldPosts)
+
+	if err := listener.Mailer.Send(message); err != nil {
 		log.Printf("smtp error: %s", err)
 	}
 }
