@@ -159,6 +159,7 @@ func parseDetectors(items []TypeConfig) ([]Detector, error) {
 		case "SameBodyDetector":
 			detector = SameBodyDetector{}
 		}
+		log.Printf("adding detector: %#v", detector)
 		detectors[i] = detector
 	}
 	return detectors, nil
@@ -181,6 +182,7 @@ func parseListeners(items []TypeConfig) ([]Listener, error) {
 				},
 			}
 		}
+		log.Printf("adding listener: %#v", listener)
 		listeners[i] = listener
 	}
 	return listeners, nil
