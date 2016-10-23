@@ -8,6 +8,7 @@ import (
 	"github.com/xpd-org/xpd/mail"
 	"fmt"
 	"errors"
+	"strconv"
 )
 
 // poll RSS feeds once per 15 minutes
@@ -155,7 +156,17 @@ func parseDetectors(items []TypeConfig) ([]Detector, error) {
 		default:
 			return nil, fmt.Errorf("unsupported detector type: %s", config.Type)
 		case "SimilarWordCountDetector":
-			detector = NewSimilarWordCountDetector(0.1)
+			var maxDiffRatio float64
+			if s, ok := config.Params["maxDiffRatio"]; ok {
+				if value, err := strconv.ParseFloat(s, 64); err != nil {
+					return nil, err
+				} else {
+					maxDiffRatio = value
+				}
+			} else {
+				maxDiffRatio = 0.1
+			}
+			detector = NewSimilarWordCountDetector(maxDiffRatio)
 		case "SameBodyDetector":
 			detector = SameBodyDetector{}
 		}
