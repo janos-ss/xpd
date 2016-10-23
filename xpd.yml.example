@@ -2,9 +2,20 @@ feeds:
   - id: so-sonarqube
     url: http://stackoverflow.com/feeds/tag?tagnames=sonarqube&sort=newest
   - id: gg-sonarqube
-    url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=15
+    url: https://groups.google.com/forum/feed/sonarqube/msgs/rss.xml?num=50
   - id: testing
     url: http://localhost/feeds/testing.xml
+
 detectors:
   - type: SameBodyDetector
   - type: SimilarWordCountDetector
+    params:
+      maxDiffRatio: 0.15
+
+listeners:
+  - type: gmail
+    params:
+      from: yourgmail
+      pass: yourpass
+      subject: "[xpd somelabel]"
+      recipient: youremail
