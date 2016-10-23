@@ -17,5 +17,5 @@ listeners:
     params:
       from: yourgmail
       pass: yourpass
-      subject: "[xpd somelabel]"
+      subject: "[xpd somelabel] possible cross-post"
       recipient: youremail
