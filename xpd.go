@@ -155,7 +155,7 @@ func parseDetectors(items []TypeConfig) ([]Detector, error) {
 		default:
 			return nil, fmt.Errorf("unsupported detector type: %s", config.Type)
 		case "SimilarWordCountDetector":
-			detector = NewSimilarWordCountDetector(0.2)
+			detector = NewSimilarWordCountDetector(0.1)
 		case "SameBodyDetector":
 			detector = SameBodyDetector{}
 		}
