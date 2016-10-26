@@ -30,7 +30,7 @@ for file in $(ls logs | grep $pattern); do
 
     if tail -n 1000 "$file" | grep -qF 'possible cross-post'; then
         echo '<pre>'
-        tail -n 1000 "$file" | sed -ne '/possible cross-post/,/----/p' | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
+        tail -n 1000 "$file" | sed -ne '/possible cross-post/,/----/p' | tail -n 20 | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
         echo '</pre>'
     fi
 
