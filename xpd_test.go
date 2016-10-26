@@ -3,6 +3,7 @@ package xpd
 import (
 	"reflect"
 	"testing"
+	"strconv"
 )
 
 func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T) {
@@ -122,6 +123,66 @@ func Test_ParseConfig_nonexistent_should_crash(t *testing.T) {
 func Test_ParseConfig_malformed_should_crash(t *testing.T) {
 	if _, err := ParseConfig("xpd.go"); err == nil {
 		t.Fatal("should fail to parse malformed config file")
+	}
+}
+
+func Test_parseDetectors_SimilarWordCountDetector_with_default_maxDiffRatio(t *testing.T) {
+	config := &Config{
+		Feeds: []Feed{{}},
+		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
+	}
+
+	context, err := ParseContext(config)
+	if err != nil {
+		t.Fatalf("got %#v; expected nil (successful parsing of configuration)", err)
+	}
+	if len(context.Detectors) != 1 {
+		t.Fatalf("got %d detectors; expected 1", len(context.Detectors))
+	}
+
+	defaultMaxDiffRatio := 0.1
+	detector := context.Detectors[0].(SimilarWordCountDetector)
+	if detector.maxDiffRatio != defaultMaxDiffRatio {
+		t.Fatalf("got maxDiffRatio=%f; expected %f", detector.maxDiffRatio, defaultMaxDiffRatio)
+	}
+}
+
+func Test_parseDetectors_SimilarWordCountDetector_with_custom_maxDiffRatio(t *testing.T) {
+	config := &Config{
+		Feeds: []Feed{{}},
+		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
+	}
+
+	customMaxDiffRatio := 0.2
+	config.Detectors[0].Params = make(map[string]string)
+	config.Detectors[0].Params["maxDiffRatio"] = strconv.FormatFloat(customMaxDiffRatio, 'f', -1, 64)
+
+	context, err := ParseContext(config)
+	if err != nil {
+		t.Fatalf("got %#v; expected nil (successful parsing of configuration)", err)
+	}
+	if len(context.Detectors) != 1 {
+		t.Fatalf("got %d detectors; expected 1", len(context.Detectors))
+	}
+
+	detector := context.Detectors[0].(SimilarWordCountDetector)
+	if detector.maxDiffRatio != customMaxDiffRatio {
+		t.Fatalf("got maxDiffRatio=%f; expected %f", detector.maxDiffRatio, customMaxDiffRatio)
+	}
+}
+
+func Test_parseDetectors_SimilarWordCountDetector_with_malformed_maxDiffRatio(t *testing.T) {
+	config := &Config{
+		Feeds: []Feed{{}},
+		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
+	}
+
+	config.Detectors[0].Params = make(map[string]string)
+	config.Detectors[0].Params["maxDiffRatio"] = "malformed"
+
+	_, err := ParseContext(config)
+	if err == nil {
+		t.Fatal("got success; expected parsing to fail due to malformed maxDiffRatio param")
 	}
 }
 
