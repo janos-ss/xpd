@@ -67,6 +67,7 @@ func (detector SimilarWordCountDetector) getWordCountMap(post Post) wordCountMap
 
 func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Post) []Post {
 	wcmap := detector.getWordCountMap(post)
+	defer detector.cleanIndex(append(oldPosts, post))
 
 	duplicates := make([]Post, 0)
 	for _, oldPost := range oldPosts {
@@ -76,6 +77,23 @@ func (detector SimilarWordCountDetector) FindDuplicates(post Post, oldPosts []Po
 		}
 	}
 	return duplicates
+}
+
+func (detector SimilarWordCountDetector) cleanIndex(posts []Post) {
+	if len(detector.indexMap) <= len(posts) {
+		return
+	}
+
+	seen := make(map[string]bool)
+	for _, post := range posts {
+		seen[post.Id] = true
+	}
+
+	for key := range detector.indexMap {
+		if _, ok := seen[key]; !ok {
+			delete(detector.indexMap, key)
+		}
+	}
 }
 
 func (wcmap wordCountMap) isSimilar(other wordCountMap, limitRatio float64) bool {

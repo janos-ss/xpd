@@ -103,18 +103,50 @@ func Test_SimilarWordCountDetector_with_added_words(t *testing.T) {
 func Test_SimilarWordCountDetector_index_growth(t *testing.T) {
 	detector := NewSimilarWordCountDetector(0.1)
 
-	detector.FindDuplicates(Post{Id: "1"}, []Post{})
+	post1 := Post{Id: "1"}
+	post2 := Post{Id: "2"}
+
+	detector.FindDuplicates(post1, []Post{})
 	if actual := len(detector.indexMap); actual != 1 {
 		t.Fatalf("got %d items in index cache; expected %d", actual, 1)
 	}
 
-	detector.FindDuplicates(Post{Id: "2"}, []Post{})
+	detector.FindDuplicates(post2, []Post{post1})
 	if actual := len(detector.indexMap); actual != 2 {
 		t.Fatalf("got %d items in index cache; expected %d", actual, 2)
 	}
 
-	detector.FindDuplicates(Post{Id: "2"}, []Post{})
+	detector.FindDuplicates(post2, []Post{post1})
 	if actual := len(detector.indexMap); actual != 2 {
 		t.Fatalf("got %d items in index cache; expected %d (unchanged)", actual, 2)
+	}
+}
+
+func Test_SimilarWordCountDetector_drop_unused_index(t *testing.T) {
+	detector := NewSimilarWordCountDetector(0.1)
+
+	post1 := Post{Id: "1"}
+	post2 := Post{Id: "2"}
+	post3 := Post{Id: "3"}
+
+	detector.FindDuplicates(post1, []Post{})
+	if actual := len(detector.indexMap); actual != 1 {
+		t.Fatalf("got %d items in index cache; expected %d", actual, 1)
+	}
+
+	detector.FindDuplicates(post2, []Post{post1})
+	if actual := len(detector.indexMap); actual != 2 {
+		t.Fatalf("got %d items in index cache; expected %d", actual, 2)
+	}
+
+	detector.FindDuplicates(post3, []Post{post2})
+	if actual := len(detector.indexMap); actual != 2 {
+		t.Fatalf("got %d items in index cache; expected %d", actual, 2)
+	}
+	if _, ok := detector.indexMap[post2.Id]; !ok {
+		t.Fatalf("got post %s not in index, but it should be", post2.Id)
+	}
+	if _, ok := detector.indexMap[post3.Id]; !ok {
+		t.Fatalf("got post %s not in index, but it should be", post3.Id)
 	}
 }
