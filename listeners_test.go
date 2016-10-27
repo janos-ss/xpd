@@ -1,8 +1,8 @@
 package xpd
 
 import (
-	"testing"
 	"github.com/xpd-org/xpd/mail"
+	"testing"
 )
 
 func Test_consolePrinterListener_should_crash_on_Post_without_Feed(t *testing.T) {
@@ -26,7 +26,7 @@ func Test_consolePrinterListener_happy_path(t *testing.T) {
 	ConsolePrinterListener{}.OnDuplicates(postWithFeed, []Post{postWithFeed})
 }
 
-func Test_summaryOfPost(t*testing.T) {
+func Test_summaryOfPost(t *testing.T) {
 	post := Post{Id: "feed1-1", Subject: "sub1-1", Feed: &Feed{Id: "feed1"}}
 	actual := summaryOfPost(post)
 	expected := "feed=feed1; subject=sub1-1; id=feed1-1"

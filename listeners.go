@@ -1,10 +1,10 @@
 package xpd
 
 import (
-	ct "github.com/daviddengcn/go-colortext"
-	"log"
 	"fmt"
+	ct "github.com/daviddengcn/go-colortext"
 	"github.com/xpd-org/xpd/mail"
+	"log"
 )
 
 type ConsolePrinterListener struct{}

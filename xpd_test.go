@@ -2,8 +2,8 @@ package xpd
 
 import (
 	"reflect"
-	"testing"
 	"strconv"
+	"testing"
 )
 
 func Test_defaultPostRepository_should_cycle_posts_to_keep_capacity(t *testing.T) {
@@ -36,7 +36,7 @@ func assertPanic(t *testing.T, message string, f func()) {
 
 func Test_ParseContext(t *testing.T) {
 	config := &Config{
-		Feeds: []Feed{{}},
+		Feeds:     []Feed{{}},
 		Detectors: []TypeConfig{{Type: "SameBodyDetector"}},
 	}
 	context, err := ParseContext(config)
@@ -128,7 +128,7 @@ func Test_ParseConfig_malformed_should_crash(t *testing.T) {
 
 func Test_parseDetectors_SimilarWordCountDetector_with_default_maxDiffRatio(t *testing.T) {
 	config := &Config{
-		Feeds: []Feed{{}},
+		Feeds:     []Feed{{}},
 		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
 	}
 
@@ -149,7 +149,7 @@ func Test_parseDetectors_SimilarWordCountDetector_with_default_maxDiffRatio(t *t
 
 func Test_parseDetectors_SimilarWordCountDetector_with_custom_maxDiffRatio(t *testing.T) {
 	config := &Config{
-		Feeds: []Feed{{}},
+		Feeds:     []Feed{{}},
 		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
 	}
 
@@ -173,7 +173,7 @@ func Test_parseDetectors_SimilarWordCountDetector_with_custom_maxDiffRatio(t *te
 
 func Test_parseDetectors_SimilarWordCountDetector_with_malformed_maxDiffRatio(t *testing.T) {
 	config := &Config{
-		Feeds: []Feed{{}},
+		Feeds:     []Feed{{}},
 		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
 	}
 
@@ -294,7 +294,7 @@ func Test_runForever_fails_if_config_invalid(t *testing.T) {
 	defer restoreDefaultCount()
 
 	validConfig := &Config{
-		Feeds: []Feed{{}},
+		Feeds:     []Feed{{}},
 		Detectors: []TypeConfig{{Type: "SimilarWordCountDetector"}},
 	}
 

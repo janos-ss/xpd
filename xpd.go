@@ -1,14 +1,14 @@
 package xpd
 
 import (
+	"errors"
+	"fmt"
+	"github.com/xpd-org/xpd/mail"
 	"gopkg.in/yaml.v2"
 	"io/ioutil"
 	"log"
-	"time"
-	"github.com/xpd-org/xpd/mail"
-	"fmt"
-	"errors"
 	"strconv"
+	"time"
 )
 
 // poll RSS feeds once per 15 minutes
@@ -73,8 +73,8 @@ func (repo *defaultPostRepository) Add(post Post) {
 }
 
 type TypeConfig struct {
-	Type      string
-	Params    map[string]string
+	Type   string
+	Params map[string]string
 }
 
 type Config struct {
@@ -186,10 +186,10 @@ func parseListeners(items []TypeConfig) ([]Listener, error) {
 		case "gmail":
 			listener = MailerListener{
 				Mailer: mail.GmailMailer{
-					From: config.Params["from"],
-					Pass: config.Params["pass"],
+					From:      config.Params["from"],
+					Pass:      config.Params["pass"],
 					Recipient: config.Params["recipient"],
-					Subject: config.Params["subject"],
+					Subject:   config.Params["subject"],
 				},
 			}
 		}
