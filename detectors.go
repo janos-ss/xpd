@@ -90,7 +90,7 @@ func (detector SimilarWordCountDetector) cleanIndex(posts []Post) {
 	}
 
 	for key := range detector.indexMap {
-		if _, ok := seen[key]; !ok {
+		if !seen[key] {
 			delete(detector.indexMap, key)
 		}
 	}
