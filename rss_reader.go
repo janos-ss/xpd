@@ -44,19 +44,6 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	reader.newPosts = posts
 }
 
-// RSS feeds store the post id in different non-standard places
-func extractPostId(item *rss.Item) string {
-	if len(item.Id) > 0 {
-		return item.Id
-	}
-	for _, link := range item.Links {
-		if len(link.Href) > 0 {
-			return link.Href
-		}
-	}
-	return ""
-}
-
 func (reader *rssReader) GetFeed() Feed {
 	return reader.feed
 }
@@ -74,4 +61,17 @@ func (reader *rssReader) FetchNewPosts() []Post {
 
 func charsetReader(charset string, r io.Reader) (io.Reader, error) {
 	return r, nil
+}
+
+// RSS feeds store the post id in different non-standard places
+func extractPostId(item *rss.Item) string {
+	if len(item.Id) > 0 {
+		return item.Id
+	}
+	for _, link := range item.Links {
+		if len(link.Href) > 0 {
+			return link.Href
+		}
+	}
+	return ""
 }
