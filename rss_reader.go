@@ -1,7 +1,6 @@
 package xpd
 
 import (
-	"errors"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"io"
 	"log"
@@ -74,8 +73,5 @@ func (reader *rssReader) FetchNewPosts() []Post {
 }
 
 func charsetReader(charset string, r io.Reader) (io.Reader, error) {
-	if charset == "ISO-8859-1" || charset == "iso-8859-1" {
-		return r, nil
-	}
-	return nil, errors.New("Unsupported character set encoding: " + charset)
+	return r, nil
 }
