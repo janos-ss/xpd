@@ -29,7 +29,7 @@ func Test_consolePrinterListener_happy_path(t *testing.T) {
 func Test_summaryOfPost(t *testing.T) {
 	post := Post{Id: "feed1-1", Subject: "sub1-1", Feed: &Feed{Id: "feed1"}}
 	actual := summaryOfPost(post)
-	expected := "feed=feed1; subject=sub1-1; id=feed1-1"
+	expected := "feed=feed1; id=feed1-1; subject=sub1-1"
 
 	if actual != expected {
 		t.Fatalf("got: %s\nexpected: %s", actual, expected)

@@ -21,12 +21,10 @@ func NewRssReader(uri string, feed Feed) FeedReader {
 }
 
 func (reader *rssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
-	log.Printf("%d new channel(s) in %s", len(newchannels), feed.Url)
+	log.Printf("%d new channel(s) in %s", len(newchannels), reader.feed.Id)
 }
 
 func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
-	log.Printf("%d new item(s) in %s", len(newitems), feed.Url)
-
 	posts := make([]Post, len(newitems))
 	for i, item := range newitems {
 		id := extractPostId(item)
@@ -42,6 +40,12 @@ func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems [
 	}
 
 	reader.newPosts = posts
+
+	if len(posts) == 1 {
+		log.Println("new item:", summaryOfPost(posts[0]))
+	} else {
+		log.Printf("%d new items in %s", len(newitems), reader.feed.Id)
+	}
 }
 
 func (reader *rssReader) GetFeed() Feed {

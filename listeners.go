@@ -37,5 +37,5 @@ func summaryOfDups(post Post, oldPosts []Post) string {
 }
 
 func summaryOfPost(post Post) string {
-	return fmt.Sprintf("feed=%s; subject=%s; id=%s", post.Feed.Id, post.Subject, post.Id)
+	return fmt.Sprintf("feed=%s; id=%s; subject=%s", post.Feed.Id, post.Id, post.Subject)
 }
