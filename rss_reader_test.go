@@ -54,3 +54,7 @@ func Test_itemHandler(t *testing.T) {
 func Test_chanHandler(t *testing.T) {
 	NewRssReader("dummy url", Feed{}).(*rssReader).chanHandler(nil, nil)
 }
+
+func Test_charsetReader(t *testing.T) {
+	charsetReader("dummy charset", nil)
+}
