@@ -36,3 +36,17 @@ func Test_extractPostId_should_return_empty_string_when_no_id_no_link(t *testing
 		t.Fatalf("got %#v, expected %#v", actual, id)
 	}
 }
+
+func Test_itemHandler(t *testing.T) {
+	reader := NewRssReader("dummy url", Feed{}).(*rssReader)
+
+	reader.itemHandler(nil, nil, []*rss.Item{{}})
+	if len(reader.newPosts) != 1 {
+		t.Fatalf("got %d posts, expected 1", len(reader.newPosts))
+	}
+
+	reader.itemHandler(nil, nil, []*rss.Item{{}, {}})
+	if len(reader.newPosts) != 2 {
+		t.Fatalf("got %d posts, expected 2", len(reader.newPosts))
+	}
+}
