@@ -2,11 +2,9 @@ package xpd
 
 import (
 	"errors"
-	"fmt"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"io"
 	"log"
-	"os"
 )
 
 type rssReader struct {
@@ -68,7 +66,7 @@ func (reader *rssReader) FetchNewPosts() []Post {
 	reader.newPosts = nil
 
 	if err := reader.rssFeed.Fetch(reader.uri, charsetReader); err != nil {
-		fmt.Fprintf(os.Stderr, "[e] %s: %s\n", reader.uri, err)
+		log.Printf("error: %s: %s\n", reader.uri, err)
 		return []Post{}
 	}
 
