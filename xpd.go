@@ -193,7 +193,7 @@ func parseListeners(items []TypeConfig) ([]Listener, error) {
 				},
 			}
 		}
-		log.Printf("adding listener: %#v", listener)
+		log.Printf("adding listener: %v", listener)
 		listeners[i] = listener
 	}
 	return listeners, nil

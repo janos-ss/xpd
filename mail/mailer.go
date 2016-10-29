@@ -3,6 +3,7 @@ package mail
 import (
 	"github.com/SlyMarbo/gmail"
 	"errors"
+	"fmt"
 )
 
 type Mailer interface {
@@ -43,4 +44,12 @@ func (mailer GmailMailer) Send(message string) error {
 	email.AddRecipient(mailer.Recipient)
 
 	return email.Send()
+}
+
+func (mailer GmailMailer) String() string {
+	safeMailer := mailer
+	safeMailer.From = "*"
+	safeMailer.Pass = "*"
+	safeMailer.Recipient = "*"
+	return fmt.Sprintf("%#v", safeMailer)
 }
