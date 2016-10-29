@@ -21,11 +21,11 @@ func NewRssReader(uri string, feed Feed) FeedReader {
 }
 
 func (reader *rssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
-	log.Printf("%d new channel(s) in %s\n", len(newchannels), feed.Url)
+	log.Printf("%d new channel(s) in %s", len(newchannels), feed.Url)
 }
 
 func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
-	log.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
+	log.Printf("%d new item(s) in %s", len(newitems), feed.Url)
 
 	posts := make([]Post, len(newitems))
 	for i, item := range newitems {
@@ -51,8 +51,9 @@ func (reader *rssReader) GetFeed() Feed {
 func (reader *rssReader) FetchNewPosts() []Post {
 	reader.newPosts = nil
 
+	// note: itemHandler will get called synchronously when there are new posts
 	if err := reader.rssFeed.Fetch(reader.uri, charsetReader); err != nil {
-		log.Printf("error: %s: %s\n", reader.uri, err)
+		log.Printf("error: %s: %s", reader.uri, err)
 		return []Post{}
 	}
 
