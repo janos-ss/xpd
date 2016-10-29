@@ -3,7 +3,6 @@ package xpd
 import (
 	"errors"
 	"fmt"
-	ct "github.com/daviddengcn/go-colortext"
 	rss "github.com/jteeuwen/go-pkg-rss"
 	"io"
 	"log"
@@ -25,16 +24,10 @@ func NewRssReader(uri string, feed Feed) FeedReader {
 }
 
 func (reader *rssReader) chanHandler(feed *rss.Feed, newchannels []*rss.Channel) {
-	ct.ResetColor()
-	defer ct.ResetColor()
-	ct.ChangeColor(ct.Blue, true, ct.None, false)
 	log.Printf("%d new channel(s) in %s\n", len(newchannels), feed.Url)
 }
 
 func (reader *rssReader) itemHandler(feed *rss.Feed, ch *rss.Channel, newitems []*rss.Item) {
-	ct.ResetColor()
-	defer ct.ResetColor()
-	ct.ChangeColor(ct.Green, true, ct.None, false)
 	log.Printf("%d new item(s) in %s\n", len(newitems), feed.Url)
 
 	posts := make([]Post, len(newitems))

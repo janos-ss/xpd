@@ -2,7 +2,6 @@ package xpd
 
 import (
 	"fmt"
-	ct "github.com/daviddengcn/go-colortext"
 	"github.com/xpd-org/xpd/mail"
 	"log"
 )
@@ -10,10 +9,6 @@ import (
 type ConsolePrinterListener struct{}
 
 func (listener ConsolePrinterListener) OnDuplicates(post Post, oldPosts []Post) {
-	ct.ResetColor()
-	defer ct.ResetColor()
-	ct.ChangeColor(ct.Red, true, ct.None, false)
-
 	log.Printf("possible cross-post(s):\n%s", summaryOfDups(post, oldPosts))
 }
 
