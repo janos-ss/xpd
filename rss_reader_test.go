@@ -58,3 +58,10 @@ func Test_chanHandler(t *testing.T) {
 func Test_charsetReader(t *testing.T) {
 	charsetReader("dummy charset", nil)
 }
+
+func Test_FetchNewPosts_should_return_empty_when_no_new(t *testing.T) {
+	posts := NewRssReader("dummy url", Feed{}).FetchNewPosts()
+	if len(posts) != 0 {
+		t.Fatalf("got %d posts, expected none", len(posts))
+	}
+}
