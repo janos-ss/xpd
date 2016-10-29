@@ -50,3 +50,7 @@ func Test_itemHandler(t *testing.T) {
 		t.Fatalf("got %d posts, expected 2", len(reader.newPosts))
 	}
 }
+
+func Test_chanHandler(t *testing.T) {
+	NewRssReader("dummy url", Feed{}).(*rssReader).chanHandler(nil, nil)
+}
