@@ -1,14 +1,14 @@
 Scripts
 -------
 
-`run.sh`: wrapper script to run `xpd` for each configuration file
+`start.sh`: wrapper script to run `xpd` for each configuration file
 in an independent `screen` session. It reuses an existing session
 or else it creates a new one.
 
 `crontab.sh`: helper script to add a line like this in `crontab`
-to periodically run `run.sh`:
+to periodically run `start.sh`:
 
-    0 * * * * $PWD/run.sh
+    0 * * * * $PWD/start.sh
 
 How to install
 --------------
@@ -21,6 +21,6 @@ gives you the steps you need to follow to complete the configuration.
 How to uninstall
 ----------------
 
-- Remove any `cron` jobs running `run.sh`
+- Remove any `cron` jobs running `start.sh`
 - `./stop.sh` to stop any running `xpd` and `screen` instances
 

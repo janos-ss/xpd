@@ -1,7 +1,7 @@
 #!/bin/sh -e
 # 
-# File: run.sh
-# Purpose: run xpd for each configuration, if not already running
+# File: start.sh
+# Purpose: start xpd for each configuration, if not already running
 #
 
 cd "$(dirname "$0")"
