@@ -9,7 +9,7 @@ import (
 type ConsolePrinterListener struct{}
 
 func (listener ConsolePrinterListener) OnDuplicates(post Post, oldPosts []Post) {
-	log.Printf("possible cross-post(s):\n%s", summaryOfDups(post, oldPosts))
+	log.Printf("possible cross-post:\n%s", summaryOfDups(post, oldPosts))
 }
 
 type MailerListener struct {
