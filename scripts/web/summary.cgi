@@ -7,6 +7,11 @@ cross_posts() {
     '$0 ~ mark { print; getline; print; getline; while ($0 ~ /^  of:/) { print; getline; } print "----" }'
 }
 
+urlize() {
+    # not the smartest regex, but works in both GNU and BSD sed
+    sed -e 's!http[s]*://[^);]*!<a href="&">&</a>!g'
+}
+
 echo Content-type: text/html
 echo "Refresh: 300;$REQUEST_URI"
 echo
@@ -37,13 +42,13 @@ for file in $(ls logs | grep $pattern); do
 
     if tail -n 1000 "$file" | grep -q "$cross_post_log_start"; then
         echo '<pre>'
-        tail -n 1000 "$file" | cross_posts | tail -n 20 | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
+        tail -n 1000 "$file" | cross_posts | tail -n 20 | urlize
         echo '</pre>'
     fi
 
     echo
     echo '<pre>'
-    tail "$file" | sed -e 's!htt.*://[^)]*!<a href="&">&</a>!g'
+    tail "$file" | urlize
     echo '</pre>'
 done
 
