@@ -41,7 +41,8 @@ type Detector interface {
 }
 
 type Listener interface {
-	OnDuplicates(Post, []Post)
+	OnCrossPost(Post, []Post)
+	OnDuplicate(Post, []Post)
 }
 
 type PostRepository interface {
@@ -264,7 +265,7 @@ func processNewPost(context *Context, post Post) {
 		if len(possibleDuplicates) > 0 {
 			for _, listener := range context.Listeners {
 				// TODO add Detector ref as param
-				listener.OnDuplicates(post, possibleDuplicates)
+				listener.OnDuplicate(post, possibleDuplicates)
 			}
 			break
 		}

@@ -190,7 +190,11 @@ type mockListener struct {
 	invoked bool
 }
 
-func (listener *mockListener) OnDuplicates(Post, []Post) {
+func (listener *mockListener) OnCrossPost(Post, []Post) {
+	listener.invoked = true
+}
+
+func (listener *mockListener) OnDuplicate(Post, []Post) {
 	listener.invoked = true
 }
 
