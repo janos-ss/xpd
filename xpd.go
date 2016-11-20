@@ -263,13 +263,35 @@ func processNewPost(context *Context, post Post) {
 	for _, detector := range context.Detectors {
 		possibleDuplicates := detector.FindDuplicates(post, recent)
 		if len(possibleDuplicates) > 0 {
-			for _, listener := range context.Listeners {
-				// TODO add Detector ref as param
-				listener.OnDuplicate(post, possibleDuplicates)
+			dups, cross := splitDupsAndCrossPosts(post, possibleDuplicates)
+			if len(dups) > 0 {
+				for _, listener := range context.Listeners {
+					// TODO add Detector ref as param
+					listener.OnDuplicate(post, dups)
+				}
+			}
+			if len(cross) > 0 {
+				for _, listener := range context.Listeners {
+					// TODO add Detector ref as param
+					listener.OnCrossPost(post, cross)
+				}
 			}
 			break
 		}
 	}
 
 	repo.Add(post)
+}
+
+func splitDupsAndCrossPosts(post Post, posts []Post) ([]Post, []Post) {
+	dups := make([]Post, 0, len(posts))
+	cross := make([]Post, 0, len(posts))
+	for _, p := range posts {
+		if p.Feed.Id == post.Feed.Id {
+			dups = append(dups, p)
+		} else {
+			cross = append(cross, p)
+		}
+	}
+	return dups, cross
 }

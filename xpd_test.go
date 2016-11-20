@@ -199,7 +199,7 @@ func (listener *mockListener) OnDuplicate(Post, []Post) {
 }
 
 func Test_processPost(t *testing.T) {
-	post := Post{}
+	post := Post{Feed: &Feed{Id: "p1"}}
 
 	listener := &mockListener{}
 	repo := NewPostRepository()
