@@ -187,15 +187,16 @@ func Test_parseDetectors_SimilarWordCountDetector_with_malformed_maxDiffRatio(t 
 }
 
 type mockListener struct {
-	invoked bool
+	invokedWithDups bool
+	invokedWithCross bool
 }
 
 func (listener *mockListener) OnCrossPost(Post, []Post) {
-	listener.invoked = true
+	listener.invokedWithCross = true
 }
 
 func (listener *mockListener) OnDuplicate(Post, []Post) {
-	listener.invoked = true
+	listener.invokedWithDups = true
 }
 
 func Test_processPost(t *testing.T) {
@@ -211,7 +212,7 @@ func Test_processPost(t *testing.T) {
 	}
 
 	processNewPost(context, post)
-	if listener.invoked {
+	if listener.invokedWithDups || listener.invokedWithCross {
 		t.Error("mock listener was invoked, but should not have been")
 	}
 	if len(repo.FindRecent()) != 1 {
@@ -219,11 +220,19 @@ func Test_processPost(t *testing.T) {
 	}
 
 	processNewPost(context, post)
-	if !listener.invoked {
+	if !listener.invokedWithDups {
 		t.Error("mock listener should have been invoked, but it was not")
 	}
 	if len(repo.FindRecent()) != 2 {
 		t.Fatal("got != 2 recent posts, expected the dummy post added twice")
+	}
+
+	processNewPost(context, Post{Feed: &Feed{Id: "p2"}})
+	if !listener.invokedWithCross {
+		t.Error("mock listener should have been invoked, but it was not")
+	}
+	if len(repo.FindRecent()) != 3 {
+		t.Fatal("got != 3 recent posts, expected the dummy post added twice")
 	}
 }
 

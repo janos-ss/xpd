@@ -21,9 +21,14 @@ func Test_consolePrinterListener_should_crash_on_duplicate_Post_without_Feed(t *
 	})
 }
 
-func Test_consolePrinterListener_happy_path(t *testing.T) {
+func Test_consolePrinterListener_happy_path_duplicate(t *testing.T) {
 	postWithFeed := Post{Subject: "dummyPost", Feed: &Feed{Id: "dummyFeed"}}
 	ConsolePrinterListener{}.OnDuplicate(postWithFeed, []Post{postWithFeed})
+}
+
+func Test_consolePrinterListener_happy_path_cross(t *testing.T) {
+	postWithFeed := Post{Subject: "dummyPost", Feed: &Feed{Id: "dummyFeed"}}
+	ConsolePrinterListener{}.OnCrossPost(postWithFeed, []Post{postWithFeed})
 }
 
 func Test_summaryOfPost(t *testing.T) {
@@ -36,12 +41,24 @@ func Test_summaryOfPost(t *testing.T) {
 	}
 }
 
-func Test_MailerListener_success(t *testing.T) {
+func Test_MailerListener_success_duplicate(t *testing.T) {
 	postWithFeed := Post{Subject: "dummyPost", Feed: &Feed{Id: "dummyFeed"}}
 
 	mailer := &mail.MockMailer{}
 	listener := MailerListener{Mailer: mailer}
 	listener.OnDuplicate(postWithFeed, []Post{postWithFeed})
+
+	if mailer.Message == "" {
+		t.Fatal("got empty mock message; should have been set by OnDuplicate")
+	}
+}
+
+func Test_MailerListener_success_cross(t *testing.T) {
+	postWithFeed := Post{Subject: "dummyPost", Feed: &Feed{Id: "dummyFeed"}}
+
+	mailer := &mail.MockMailer{}
+	listener := MailerListener{Mailer: mailer}
+	listener.OnCrossPost(postWithFeed, []Post{postWithFeed})
 
 	if mailer.Message == "" {
 		t.Fatal("got empty mock message; should have been set by OnDuplicate")
